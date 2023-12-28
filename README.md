@@ -1,3 +1,3 @@
 # selection-committee
 
-Выпускная квалификационная работа для колледжа
+Final qualifying work for college
