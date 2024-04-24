@@ -1,0 +1,22 @@
+#header, .module caption{
+    background: #37aba4;
+}
+
+.theme-toggle svg.theme-icon-when-auto, .theme-toggle svg.theme-icon-when-dark, .theme-toggle svg.theme-icon-when-light {
+    fill: var(--header-link-color);
+    color: #37aba4;
+}
+
+div.breadcrumbs{
+    background: #28918d;
+}
+
+.object-tools a.download-table {
+    background-image: url(../../img/icons8-dwnld-24.png);
+    background-size: 13px;
+}
+.object-tools a.viewsitelink, .object-tools a.download-table {
+    background-repeat: no-repeat;
+    background-position: right 7px center;
+    padding-right: 26px;
+}
