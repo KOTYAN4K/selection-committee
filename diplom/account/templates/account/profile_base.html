@@ -2,6 +2,16 @@
 
 {% block title %}Профиль{% endblock %}
 
-{% block content %}
-	{% include 'includes/side-menu.html' %}
+{% block side-menu %}
+    <nav class="side-menu">
+        <ul>
+            <li><a href="{% url 'account:profile' user.id %}">Кабинет</a></li>
+            <li><a href="{% url 'account:profile-edit' user.id %}">Личная информация</a></li>
+            <li><a href="">Документы</a></li>
+            <li><a href="">Родители</a></li>
+            <li><a href="">О вступительном экзамене</a></li>
+            <li><a href="">Заявление</a></li>
+            <li><a href="">Узнать рейтинг</a></li>
+        </ul>
+    </nav>
 {% endblock %}

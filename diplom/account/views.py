@@ -26,7 +26,7 @@ class ProfileUser(TemplateView, LoginRequiredMixin):
     template_name = 'account/profile.html'
 
     def get_success_url(self):
-        return reverse_lazy('account:profile', args=[self.request.user.pk])
+        return reverse_lazy('account:profile', args=[self.request.user.id])
 
     def get_object(self, queryset=None):
         return self.request.user

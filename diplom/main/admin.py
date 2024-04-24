@@ -39,10 +39,9 @@ admin.site.register(Admission)
 
 
 def create_account(applicant):
-    if User.objects.get(email=applicant.email) is None:
+    if not User.objects.filter(email=applicant.email).exists():
         new_user = User()
         new_user.username = applicant.first_name + applicant.last_name + str(applicant.pk)
-
         new_user.set_password(applicant.patronymic)
         new_user.email = applicant.email
         new_user.student = applicant

@@ -42,22 +42,15 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
 
-class ProfileUserForm(forms.Form):
-    last_name = forms.CharField(disabled=True, label='Логин', widget=forms.TextInput())
-    first_name = forms.CharField(disabled=True, label='Почта', widget=forms.TextInput())
-    patronymic = forms.CharField(disabled=True, label='Почта', widget=forms.TextInput())
+class ProfileUserForm(forms.ModelForm):
+    # last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    # first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    # patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    email = forms.CharField(disabled=True, label='Эл.Почта', widget=forms.TextInput(attrs={'class': 'form-input'}))
 
     class Meta:
         model = Applicant
         fields = '__all__'
-        labels = {
-            'first_name': 'Имя',
-            'last_name': 'Фамилия'
-        }
-        widgets = {
-            'first_name': forms.TextInput(),
-            'last_name': forms.TextInput()
-        }
 
 
 class CustomUserChangeForm(UserChangeForm):

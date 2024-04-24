@@ -75,7 +75,7 @@ class Applicant(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа", blank=True, null=True)
     graduation_date = models.DateField(verbose_name="Дата окончания школы", blank=True, null=True)
     time_created = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=20, verbose_name="Дата окончания школы",
+    status = models.CharField(max_length=20, verbose_name="Статус заявки",
                               choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
                               default='watching')
 

@@ -12,7 +12,11 @@
 
 .header{
     background: #37aba4;
-    margin-bottom: 35px;
+
+}
+
+main{
+    margin-top: 35px;
 }
 
 .navigation-menu-list{
@@ -76,19 +80,26 @@ footer{
     width: 20px;
 }
 
+.side-menu{
+    background: #28918d;
+    margin-right: 25px;
+    height: 95vh;
+    float: left;
+}
 
-/*.departments form{*/
+.side-menu ul{
+    display: flex;
+    flex-direction: column;
+}
 
-/*    margin: 0 auto;*/
-/*}*/
+.side-menu ul li{
+    padding: 10px;
+}
 
-/*.department_input{*/
-/*    display: flex;*/
-/*    justify-content: space-between;*/
-/*    margin-bottom: 15px;*/
-/*}*/
+.side-menu a{
+    color: white;
+}
 
-/*button[type="submit"]{*/
-/*    margin-top: 15px;*/
-/*    width: 200px;*/
-/*}*/
+.side-menu li:hover{
+    background: #37aba4;
+}

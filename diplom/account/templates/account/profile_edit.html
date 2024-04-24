@@ -1,7 +1,6 @@
 {% extends 'account/profile_base.html' %}
 
 {% block content %}
-    {{ block.super }}
     <h1>Профиль</h1>
     <form method="POST">
         {% csrf_token %}
