@@ -1,0 +1,18 @@
+{% extends 'account/profile_base.html' %}
+
+{% block content %}
+    {{ block.super }}
+    <h1>Профиль</h1>
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-error">{{ form.non_field_errors }}</div>
+
+        {% for f in form %}
+            <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+            <div class="form-error">{{ f.errors }}</div>
+        {% endfor %}
+        <button class="button">Сохранить</button>
+
+    </form>
+{% endblock %}

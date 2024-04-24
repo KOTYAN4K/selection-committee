@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<div class="wrapper">
+    <header class="header">
+        <div class="container">
+            <nav class="navigation-menu">
+                <ul class="navigation-menu-list">
+                    <li><a href="{% url 'home' %}">Главная</a></li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser or user.is_staff %}
+                            <li><a href="admin/">Админ-панель</a></li>
+                        {% else %}
+                            <li><a href="{% url 'account:profile' user.id %}">Личный кабинет</a></li>
+                        {% endif %}
+                        
+                        <li>
+                            <form action="{% url 'account:logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit">Выйти</button>
+                            </form>
+
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'account:login' %}">Логин</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+
+        </div>
+    </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% extends 'admin/change_list.html' %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/admin/admin.css' %}">
+{% endblock %}
+
+{% block object-tools-items %}
+    <li>
+        <a class="download-table" href="{% url 'download-table' %}">
+            Скачать таблицу
+        </a>
+    </li>
+
+    {{ block.super }}
+
+{% endblock %}

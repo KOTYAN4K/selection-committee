@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Отделения{% endblock %}
+
+{% block content %}
+    <div class="departments">
+        <form method="post">
+            {% csrf_token %}
+
+            <div>{{ form.non_field_errors }}</div>
+
+            {% for f in form %}
+                <div class="department_input">
+                    <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+                    {{ f }}
+{#                    <div>{{ f.errors }}</div>#}
+                </div>
+            {% endfor %}
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+{% endblock %}

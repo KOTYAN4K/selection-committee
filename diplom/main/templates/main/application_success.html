@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Отделения{% endblock %}
+
+{% block content %}
+    <div class="application-success">
+        <h1 hidden="hidden">Заявка успешно отправлена</h1>
+        <h2>Вы успешно подали заявку на вступление в колледж</h2>
+        <p>Ожидайте одобрение вашей заявки на ваш адрес электронной почты.</p>
+        <a href="{% url 'home' %}">Вернуться на главную страницу</a>
+    </div>
+{% endblock %}

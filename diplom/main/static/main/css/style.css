@@ -1,0 +1,94 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+.container{
+    width: 1280px;
+    margin: 0 auto;
+}
+
+.header{
+    background: #37aba4;
+    margin-bottom: 35px;
+}
+
+.navigation-menu-list{
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.navigation-menu-list a{
+    color:white;
+}
+
+.departments{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.department{
+    border: #37aba4 1px solid;
+    padding: 50px 25px;
+    text-align: center;
+}
+
+.department h3,
+.department p{
+    color: black;
+}
+
+footer{
+    position: relative;
+    bottom: 0;
+}
+
+/* таблица */
+
+.list{
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    border: 3px solid #a9a9a9;
+}
+
+.list thead tr{
+    background: darkgray;
+}
+
+.list tbody tr:nth-child(even){
+    background: #dadada;
+}
+
+.list td, .list th{
+    padding: 10px;
+    border: 1px #a9a9a9 solid;
+    font-weight: normal;
+}
+
+.list thead tr th:nth-child(1),
+.list tbody tr td:nth-child(1){
+    width: 20px;
+}
+
+
+/*.departments form{*/
+
+/*    margin: 0 auto;*/
+/*}*/
+
+/*.department_input{*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    margin-bottom: 15px;*/
+/*}*/
+
+/*button[type="submit"]{*/
+/*    margin-top: 15px;*/
+/*    width: 200px;*/
+/*}*/

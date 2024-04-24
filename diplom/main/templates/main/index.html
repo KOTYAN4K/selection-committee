@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Отделения{% endblock %}
+
+{% block content %}
+    <div class="departments">
+        {% for department in departments %}
+            <a href="{% url 'form' %}">
+                <div class="department">
+                    <h3>{{ department.name }}</h3>
+                    <p>{{ department.description }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}
