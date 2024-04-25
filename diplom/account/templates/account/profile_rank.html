@@ -1,0 +1,13 @@
+{% extends 'account/profile_base.html' %}
+
+{% block title %}Рейтинг{% endblock %}
+
+{% block content %}
+    <h1>Профиль</h1>
+    <div>
+        {% for object in object_list %}
+        	{{ object.applicant }}
+        {% endfor %}
+
+    </div>
+{% endblock %}

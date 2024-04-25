@@ -1,12 +1,15 @@
-from django.http import HttpResponse
+import os
+
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
 
+from diplom import settings
 from main.forms import ApplicantShortForm
-from main.models import Department, Applicant
+from main.models import Department, Applicant, Parent
 
 
 # Create your views here.
@@ -38,73 +41,76 @@ def download_table(request):
     ws = wb.active
     ws.title = 'Студенты'
 
-    ws.append(['№ п/п',
-               'ФИО',
-               'пол',
-               'Кол "5"',
-               'Кол "4"',
-               'Кол "3"',
-               'Снилс',
-               'инн',
-               'средн балл',
-               'оригинал/копия',
-               'внебюджет',
-               'Документы | забрали',
-               'Получил ли расписку',
-               'школа',
-               'год окончания',
-               'ФИС',
-               'номер заявления',
-               'Электронное заявление',
-               'Дата ЭЗ',
-               'Дата и время проведения испытания',
-               'Статус',
-               'Вступительный экзамен',
-               'Дата рождения',
-               'Личный телефон',
-               'Мама',
-               'Телефон мамы',
-               'Папа',
-               'Телефон папы',
-               'номер паспорта',
-               'Кем выдан',
-               'Дата выдачи'
-               ])
+    ws.append([
+        '№ п/п',
+        'ФИО',
+        'пол',
+        'Кол "5"',
+        'Кол "4"',
+        'Кол "3"',
+        'Снилс',
+        'инн',
+        'средн балл',
+        'оригинал/копия',
+        'внебюджет',
+        'Документы | забрали',
+        'Получил ли расписку',
+        'школа',
+        'год окончания',
+        'ФИС',
+        'номер заявления',
+        'Электронное заявление',
+        'Дата ЭЗ',
+        'Дата и время проведения испытания',
+        'Статус',
+        'Вступительный экзамен',
+        'Дата рождения',
+        'Личный телефон',
+        'Мама',
+        'Телефон мамы',
+        'Папа',
+        'Телефон папы',
+        'номер паспорта',
+        'Кем выдан',
+        'Дата выдачи'
+    ])
 
     # Добавьте данные из базы данных в файл Excel
     for obj in queryset:
+        parents = Parent.objects.get(pk=obj.pk)
         ws.append([obj.pk,
-                   f'{obj.first_name} {obj.last_name} {obj.patronymic}'],  # ФИО
-                  obj.gender,  # Пол
-                  'Кол "5"',
-                  'Кол "4"',
-                  'Кол "3"',
-                  'Снилс',
-                  'инн',
-                  'средн балл',
-                  'оригинал/копия',
-                  'внебюджет',
-                  'Документы | забрали',
-                  'Получил ли расписку',
-                  obj.school,
-                  obj.graduation_date,
-                  'ФИС',
-                  'номер заявления',
-                  'Электронное заявление',
-                  'Дата ЭЗ',
-                  'Дата и время проведения испытания',
-                  'Статус',
-                  'Вступительный экзамен',
-                  'Дата рождения',
-                  'Личный телефон',
-                  'Мама',
-                  'Телефон мамы',
-                  'Папа',
-                  'Телефон папы',
-                  'номер паспорта',
-                  'Кем выдан',
-                  'Дата выдачи'
-                  )
+                   f'{obj.first_name} {obj.last_name} {obj.patronymic}',  # ФИО
+                   f'{obj.gender}',  # Пол
+                   'Кол "5"',
+                   'Кол "4"',
+                   'Кол "3"',
+                   'Снилс',
+                   'инн',
+                   'средн балл',
+                   'оригинал/копия',
+                   'внебюджет',
+                   'Документы | забрали',
+                   'Получил ли расписку',
+                   f'{obj.school}',
+                   f'{obj.graduation_date}',
+                   'ФИС',
+                   'номер заявления',
+                   'Электронное заявление',
+                   'Дата ЭЗ',
+                   'Дата и время проведения испытания',
+                   'Статус',
+                   'Вступительный экзамен',
+                   'Дата рождения',
+                   'Личный телефон',
+                   f'{parents.mother_full_name}',
+                   f'{parents.mother_phone}',
+                   f'{parents.father_full_name}',
+                   f'{parents.father_phone}',
+                   'номер паспорта',
+                   'Кем выдан',
+                   'Дата выдачи'
+                   ])
+
 
     # Создаём HTTP-ответ для скачивания файла
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -112,6 +118,12 @@ def download_table(request):
 
     # Сохраняем файл Excel в HTTP-ответ
     wb.save(response)
+    return response
+
+
+def download_document(request):
+    response = FileResponse('documents/tipovaya-forma_soglasie.doc')
+    response['Content-Disposition'] = 'attachment; filename="filename.doc"'
     return response
 
 

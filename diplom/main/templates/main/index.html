@@ -6,12 +6,6 @@
 
 {% block content %}
     <div class="departments">
-        {% for department in departments %}
-            <a href="{% url 'form' %}">
-                <div class="department">
-                    <h3>{{ department.name }}</h3>
-                </div>
-            </a>
-        {% endfor %}
+        <a href="{% url 'form' %}">Подать заявку на регистрацию</a>
     </div>
 {% endblock %}

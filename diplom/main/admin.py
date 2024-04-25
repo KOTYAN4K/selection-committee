@@ -74,6 +74,8 @@ class AdmissionAdmin(admin.ModelAdmin):
 admin.site.register(InternalExam)
 admin.site.register(Document)
 admin.site.register(Parent)
+# admin.site.register(School)
+# admin.site.register(Department)
 
 
 def create_account(applicant):
@@ -97,6 +99,9 @@ def create_account(applicant):
             [new_user.email],
             fail_silently=False,
         )
-
+        parents = Parent.objects.create(student=applicant)
+        documents = Document.objects.create(student=applicant)
+        parents.save()
+        documents.save()
         return True
     return False

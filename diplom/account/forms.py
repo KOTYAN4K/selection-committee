@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 
 from account.models import User
-from main.models import Applicant
+from main.models import Applicant, Parent, Document, Admission
 
 
 class LoginUserForm(AuthenticationForm):
@@ -57,19 +57,78 @@ class ProfileUserForm(forms.ModelForm):
     class Meta:
         model = Applicant
         fields = (
+            'photo',
             'last_name',
             'first_name',
             'patronymic',
             'gender',
-            'birth_date',
             'email',
             'school',
             'graduation_date',
             'address',
         )
         widgets = {
-            'gender': forms.RadioSelect(attrs={'class': 'cool', 'disabled': 'disabled'}),
-            'birth_date': forms.DateInput(attrs={'disabled': 'disabled'}),
-            'graduation_date': forms.DateInput(attrs={'type': 'date'}),
+            'photo': forms.FileInput(attrs={'class': 'form-input'}),
+            'gender': forms.Select(attrs={'disabled': 'disabled'}),
+            'graduation_date': forms.TextInput(attrs={'type': 'date', 'disabled': 'disabled'}),
             'address': forms.Textarea(attrs={'class': 'form-input'}),
         }
+
+
+class ParentsEditForm(forms.ModelForm):
+    class Meta:
+        model = Parent
+
+        fields = ('mother_full_name',
+                  'mother_phone',
+                  'father_full_name',
+                  'father_phone')
+
+        widgets = {
+            'mother_full_name': forms.TextInput(attrs={'class': 'form-input'}),
+            'mother_phone': forms.TextInput(attrs={'class': 'form-input'}),
+            'father_full_name': forms.TextInput(attrs={'class': 'form-input'}),
+            'father_phone': forms.TextInput(attrs={'class': 'form-input'}),
+        }
+
+
+class DocumentEditForm(forms.ModelForm):
+    class Meta:
+        model = Document
+
+        fields = ('SNILS',
+                  'INN',
+                  'passport_number',
+                  'issued_by',
+                  'issue_date',
+                  'certificate',
+                  'original_or_copy',
+                  'FIS')
+
+        widgets = {
+            'issue_date': forms.DateInput(attrs={'type': 'date'}),
+            'issued_by': forms.Textarea(),
+            'original_or_copy': forms.CheckboxInput(),
+        }
+
+
+class AdmissionEditForm(forms.ModelForm):
+    class Meta:
+        model = Admission
+
+        fields = (
+            'department',
+            'admission_date',
+            'out_of_budget',
+            'number_of_5',
+            'number_of_4',
+            'number_of_3',
+            'average_score',
+            'received_receipt',
+            'application_status',
+            'internal_exam_conducted',
+            'application_number',
+            'documents_collected',
+            'application_in_gov_services',
+            'internal_exam',
+        )

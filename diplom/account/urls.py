@@ -3,7 +3,7 @@ from django.contrib.auth.views import LogoutView, PasswordResetView, PasswordRes
 from django.urls import path, reverse_lazy
 
 from . import views
-
+from .views import RankProfileView
 
 app_name = "account"
 
@@ -14,6 +14,12 @@ urlpatterns = [
 
     path('profile/<int:pk>/', views.ProfileUser.as_view(), name='profile'),
     path('profile/edit/<int:pk>/', views.EditProfile.as_view(), name='profile-edit'),
+    path('profile/parents/<int:pk>/', views.ParentsProfileView.as_view(), name='parents-edit'),
+    path('profile/documents/<int:pk>/', views.DocumentsProfileView.as_view(), name='documents-edit'),
+    path('profile/admission/<int:pk>', views.AdmissionProfileView.as_view(), name='admission-create'),
+    path('profile/rank/', RankProfileView.as_view(), name='rank-profile'),
+
+    path('profile/rank', views.RankProfileView.as_view(), name='rank-profile'),
 
     path('password-change/', PasswordChangeView.as_view(), name='password_change_done'),
     path('password-change/done/', PasswordChangeDoneView.as_view(), name='password_change_done'),

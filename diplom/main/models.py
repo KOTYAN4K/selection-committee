@@ -23,28 +23,9 @@ class Department(models.Model):
         return self.name
 
 
-class Document(models.Model):
-    student = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
-                                   related_name='document')
-    SNILS = models.CharField(max_length=14, verbose_name="СНИЛС")
-    INN = models.CharField(max_length=12, verbose_name="ИНН")
-    passport_number = models.CharField(max_length=20, verbose_name="Номер паспорта")
-    issued_by = models.CharField(max_length=255, verbose_name="Кем выдан")
-    issue_date = models.DateField(verbose_name="Дата выдачи")
-    certificate = models.CharField(max_length=255, verbose_name="Свидетельство")
-    original_or_copy = models.CharField(max_length=20, verbose_name="Оригинал или копия")
-    FIS = models.CharField(max_length=255, verbose_name="ФИС")
-
-    class Meta:
-        verbose_name = "Документ"
-        verbose_name_plural = "Документы"
-
-    def __str__(self):
-        return self.certificate
-
-
 class Applicant(models.Model):
-    photo = models.ImageField(upload_to="applicants_photos/", verbose_name="Фото", blank=True, null=True)
+    photo = models.ImageField(upload_to="applicants_photos/", default="applicants_photos/default.jpg",
+                              verbose_name="Фото", blank=True, null=True)
     last_name = models.CharField(max_length=100, verbose_name="Фамилия")
     first_name = models.CharField(max_length=100, verbose_name="Имя")
     patronymic = models.CharField(max_length=100, verbose_name="Отчество")
@@ -73,19 +54,41 @@ class Applicant(models.Model):
         return f"{self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
 
 
+class Document(models.Model):
+    student = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
+                                   related_name='document', blank=True, null=True)
+    SNILS = models.CharField(max_length=14, verbose_name="СНИЛС", blank=True, null=True)
+    INN = models.CharField(max_length=12, verbose_name="ИНН", blank=True, null=True)
+    passport_number = models.CharField(max_length=20, verbose_name="Номер паспорта", blank=True, null=True)
+    issued_by = models.CharField(max_length=255, verbose_name="Кем выдан", blank=True, null=True)
+    issue_date = models.DateField(verbose_name="Дата выдачи", blank=True, null=True)
+    certificate = models.CharField(max_length=255, verbose_name="Свидетельство", blank=True, null=True)
+    original_or_copy = models.BooleanField(verbose_name="Оригинал или копия", blank=True, null=True, default=False)
+    FIS = models.CharField(max_length=255, verbose_name="ФИС", blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Документ"
+        verbose_name_plural = "Документы"
+
+    def __str__(self):
+        if self.student is None:
+            return "NULL"
+        return f'{self.student}'
+
+
 class Parent(models.Model):
     student = models.OneToOneField(Applicant, on_delete=models.CASCADE, verbose_name="Ребёнок", blank=True, null=True)
-    mother_full_name = models.CharField(max_length=255, verbose_name="ФИО матери")
-    mother_phone = models.CharField(max_length=20, verbose_name="Телефон матери")
-    father_full_name = models.CharField(max_length=255, verbose_name="ФИО отца")
-    father_phone = models.CharField(max_length=20, verbose_name="Телефон отца")
+    mother_full_name = models.CharField(max_length=255, verbose_name="ФИО матери", blank=True, null=True)
+    mother_phone = models.CharField(max_length=20, verbose_name="Телефон матери", blank=True, null=True)
+    father_full_name = models.CharField(max_length=255, verbose_name="ФИО отца", blank=True, null=True)
+    father_phone = models.CharField(max_length=20, verbose_name="Телефон отца", blank=True, null=True)
 
     class Meta:
         verbose_name = "Родитель"
         verbose_name_plural = "Родители"
 
     def __str__(self):
-        return f"{self.mother_full_name} и {self.father_full_name}"
+        return f"Родители {self.student}"
 
 
 class InternalExam(models.Model):

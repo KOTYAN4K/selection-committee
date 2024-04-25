@@ -6,6 +6,13 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-type" content="text/html;charset=windows-1251">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta name="robots" content="noindex">
+    <meta http-equiv="refresh" content="N; url=URL">
+    <meta name="Author" content="Баев Тимур Радикович">
+    <meta name="Copyright" content="Баев Тимур Радикович">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
 
@@ -20,7 +27,7 @@
                     <li><a href="{% url 'home' %}">Главная</a></li>
                     {% if user.is_authenticated %}
                         {% if user.is_superuser or user.is_staff %}
-                            <li><a href="admin/">Админ-панель</a></li>
+                            <li><a href="/admin/">Админ-панель</a></li>
                         {% else %}
                             <li><a href="{% url 'account:profile' user.id %}">Личный кабинет</a></li>
                         {% endif %}
