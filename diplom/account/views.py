@@ -34,13 +34,8 @@ class ProfileUser(TemplateView, LoginRequiredMixin):
 
 class EditProfile(UpdateView, LoginRequiredMixin):
     model = Applicant
-    form_class = ProfileUserForm
     template_name = 'account/profile_edit.html'
+    form_class = ProfileUserForm
 
     def get_success_url(self):
-        return reverse_lazy('account:profile', args=[self.request.user.pk])
-
-    def get_object(self, queryset=None):
-        return self.request.user
-
-
+        return reverse_lazy('account:profile', args=[self.request.user.id])

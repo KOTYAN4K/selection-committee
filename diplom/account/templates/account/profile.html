@@ -3,18 +3,17 @@
 {% block content %}
     <h1>Профиль</h1>
     <div>
-        <img src="{{ user.student.photo.src }}" alt="{{ user.student.photo.name }}">
+        <p><img src="{{ user.student.photo.url }}" alt="{{ user.student.photo.name }}" width="200px"></p>
         <p>ФИО: {{ user.student.last_name }} {{ user.student.first_name }} {{ user.student.patronymic }}</p>
         <p>Пол: {{ user.student.gender }}</p>
         <p>Дата рождения: {{ user.student.birth_date }}</p>
-        <p>Номер телефона: {{ user.student.phone }}</p>
+        <p>Адрес: {% if user.student.address is not None %}{{ user.student.address }}{% else %}Не указано{% endif %}</p>
+        <p>Школа: {{ user.student.school }}</p>
+        <p>Окончание школы: {{ user.student.graduation_date }}</p>
         <p>Почта: {{ user.student.email }}</p>
-        <p>Адрес: {{ user.student.address }}</p>
         <p>Мама: {{ user.student.parents.mother_full_name }}</p>
         <p>Номер телефона мамы: {{ user.student.parents.mother_phone }}</p>
         <p>Папа: {{ user.student.parents.father_full_name }}</p>
         <p>Номер телефона папы: {{ user.student.parents.father_phone }}</p>
-        <p>Школа: {{ user.student.school }}</p>
-        <p>Окончание школы: {{ user.student.graduation_date }}</p>
     </div>
 {% endblock %}

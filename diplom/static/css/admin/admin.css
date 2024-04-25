@@ -20,3 +20,7 @@ div.breadcrumbs{
     background-position: right 7px center;
     padding-right: 26px;
 }
+
+.module h2{
+    background: #28918d;
+}

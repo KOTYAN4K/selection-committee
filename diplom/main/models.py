@@ -3,7 +3,6 @@ from django.db import models
 
 class School(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
-    address = models.CharField(max_length=255, verbose_name="Адрес")
 
     class Meta:
         verbose_name = "Школа"
@@ -15,7 +14,6 @@ class School(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание")
 
     class Meta:
         verbose_name = "Отделение"
@@ -45,7 +43,38 @@ class Document(models.Model):
         return self.certificate
 
 
+class Applicant(models.Model):
+    photo = models.ImageField(upload_to="applicants_photos/", verbose_name="Фото", blank=True, null=True)
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    patronymic = models.CharField(max_length=100, verbose_name="Отчество")
+    gender = models.CharField(max_length=10, verbose_name="Пол", choices=(("male", "Мужской"),
+                                                                          ("female", "Женский")),
+                              default='male')
+    birth_date = models.DateField(verbose_name="Дата рождения")
+    email = models.EmailField(verbose_name="Эл.Почта")
+    address = models.CharField(max_length=255, verbose_name="Адрес проживания")
+    school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа", blank=True, null=True)
+    graduation_date = models.DateField(verbose_name="Дата окончания школы", auto_now=False, auto_now_add=False,
+                                       blank=True, null=True)
+    status = models.CharField(max_length=20, verbose_name="Статус заявки",
+                              choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
+                              default='watching')
+    consent = models.FileField(upload_to="consents/",
+                               verbose_name='Согласие на обработку данных', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+
+    class Meta:
+        verbose_name = "Заявка на регистрацию"
+        verbose_name_plural = "Заявки на регистрацию"
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
+
+
 class Parent(models.Model):
+    student = models.OneToOneField(Applicant, on_delete=models.CASCADE, verbose_name="Ребёнок", blank=True, null=True)
     mother_full_name = models.CharField(max_length=255, verbose_name="ФИО матери")
     mother_phone = models.CharField(max_length=20, verbose_name="Телефон матери")
     father_full_name = models.CharField(max_length=255, verbose_name="ФИО отца")
@@ -57,34 +86,6 @@ class Parent(models.Model):
 
     def __str__(self):
         return f"{self.mother_full_name} и {self.father_full_name}"
-
-
-class Applicant(models.Model):
-    photo = models.ImageField(upload_to="applicants_photos/", verbose_name="Фото", blank=True, null=True)
-    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
-    first_name = models.CharField(max_length=100, verbose_name="Имя")
-    patronymic = models.CharField(max_length=100, verbose_name="Отчество")
-    gender = models.CharField(max_length=10, verbose_name="Пол", choices=(("male", "Мужской"),
-                                                                          ("female", "Женский")),
-                              default='female')
-    birth_date = models.DateField(verbose_name="Дата рождения")
-    phone = models.CharField(max_length=20, verbose_name="Телефон")
-    email = models.EmailField(verbose_name="Эл.Почта")
-    address = models.CharField(max_length=255, verbose_name="Адрес проживания")
-    parents = models.ForeignKey(Parent, on_delete=models.CASCADE, verbose_name="Родители", blank=True, null=True)
-    school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа", blank=True, null=True)
-    graduation_date = models.DateField(verbose_name="Дата окончания школы", blank=True, null=True)
-    time_created = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=20, verbose_name="Статус заявки",
-                              choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
-                              default='watching')
-
-    class Meta:
-        verbose_name = "Абитуриент"
-        verbose_name_plural = "Абитуриенты"
-
-    def __str__(self):
-        return f"{self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
 
 
 class InternalExam(models.Model):
@@ -119,6 +120,8 @@ class Admission(models.Model):
     application_in_gov_services = models.BooleanField(default=False, verbose_name="Заявление в гос. услугах")
     internal_exam = models.OneToOneField(InternalExam, on_delete=models.CASCADE, verbose_name="Внутренний экзамен",
                                          related_name="admission", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
     class Meta:
         verbose_name = "Поступление"

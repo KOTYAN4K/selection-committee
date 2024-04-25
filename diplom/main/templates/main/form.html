@@ -15,9 +15,14 @@
                 <div class="department_input">
                     <label for="{{ f.id_for_label }}">{{ f.label }}</label>
                     {{ f }}
-{#                    <div>{{ f.errors }}</div>#}
+                    <div>{{ f.errors }}</div>
                 </div>
             {% endfor %}
+            <p>
+                <input type="checkbox" required id="accept" name="accept">
+                <label for="accept">Я даю согласие на обработку персональных данных</label>
+            </p>
+            <p><a href="">Скачать согласие</a></p>
             <button type="submit">Отправить</button>
         </form>
     </div>

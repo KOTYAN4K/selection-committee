@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3-&e9*by)dp1ejycs21jz10o-9e4ywdzzt-k7zg#zluw!r#0#w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['KOTYAN57.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -125,12 +125,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATIC_ROOT = BASE_DIR / 'static'
+# STATIC_ROOT = BASE_DIR / 'static'
+
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

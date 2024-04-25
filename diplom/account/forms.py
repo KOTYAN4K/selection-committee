@@ -42,18 +42,34 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
 
-class ProfileUserForm(forms.ModelForm):
-    # last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-input'}))
-    # first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
-    # patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'form-input'}))
-    email = forms.CharField(disabled=True, label='Эл.Почта', widget=forms.TextInput(attrs={'class': 'form-input'}))
-
-    class Meta:
-        model = Applicant
-        fields = '__all__'
-
-
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = get_user_model()
         fields = ('username', 'password', 'email',)
+
+
+class ProfileUserForm(forms.ModelForm):
+    last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'form-input'}))
+    email = forms.CharField(disabled=True, label='Эл.Почта', widget=forms.TextInput(attrs={'class': 'form-input'}))
+
+    class Meta:
+        model = Applicant
+        fields = (
+            'last_name',
+            'first_name',
+            'patronymic',
+            'gender',
+            'birth_date',
+            'email',
+            'school',
+            'graduation_date',
+            'address',
+        )
+        widgets = {
+            'gender': forms.RadioSelect(attrs={'class': 'cool', 'disabled': 'disabled'}),
+            'birth_date': forms.DateInput(attrs={'disabled': 'disabled'}),
+            'graduation_date': forms.DateInput(attrs={'type': 'date'}),
+            'address': forms.Textarea(attrs={'class': 'form-input'}),
+        }
