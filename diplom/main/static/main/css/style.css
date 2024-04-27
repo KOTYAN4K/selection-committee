@@ -11,11 +11,11 @@
 }
 
 .header{
-    background: #37aba4;
+    background: #0072A3;
 
 }
 
-main{
+.mainside{
     margin-top: 35px;
 }
 
@@ -37,7 +37,7 @@ main{
 }
 
 .department{
-    border: #37aba4 1px solid;
+    border: #0072A3 1px solid;
     padding: 50px 25px;
     text-align: center;
 }
@@ -58,7 +58,7 @@ footer{
     width: 100%;
     table-layout: auto;
     border-collapse: collapse;
-    border: 3px solid #a9a9a9;
+    border: 3px solid #0072A3;
 }
 
 .list thead tr{
@@ -81,7 +81,7 @@ footer{
 }
 
 .side-menu{
-    background: #28918d;
+    background: #0072A3;
     margin-right: 25px;
     height: 95vh;
     float: left;
@@ -101,6 +101,6 @@ footer{
 }
 
 .side-menu li:hover{
-    background: #37aba4;
+    background: #0072A3;
 }
 

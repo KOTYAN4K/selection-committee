@@ -23,8 +23,8 @@
     <header class="header">
         <div class="container">
             <nav class="navigation-menu">
+                <a href="{% url 'home' %}"><img src="{% static 'main/img/logo.svg' %}" alt=""></a>
                 <ul class="navigation-menu-list">
-                    <li><a href="{% url 'home' %}">Главная</a></li>
                     {% if user.is_authenticated %}
                         {% if user.is_superuser or user.is_staff %}
                             <li><a href="/admin/">Админ-панель</a></li>
@@ -35,7 +35,7 @@
                         <li>
                             <form action="{% url 'account:logout' %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit">Выйти</button>
+                                <button class="exit-button" type="submit">Выйти</button>
                             </form>
 
                         </li>
@@ -46,10 +46,10 @@
             </nav>
         </div>
     </header>
-    {% block side-menu %}
-    {% endblock %}
     <main>
-        <div class="container">
+        {% block side-menu %}
+        {% endblock %}
+        <div class="mainside container">
             {% block content %}
             {% endblock %}
         </div>

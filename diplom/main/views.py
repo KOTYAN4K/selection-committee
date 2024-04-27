@@ -1,15 +1,15 @@
+import mimetypes
 import os
 
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
 
-from diplom import settings
 from main.forms import ApplicantShortForm
-from main.models import Department, Applicant, Parent
+from main.models import Department, Applicant, Parent, School
+# from main.utils import parse_schools
 
 
 # Create your views here.
@@ -77,7 +77,7 @@ def download_table(request):
 
     # Добавьте данные из базы данных в файл Excel
     for obj in queryset:
-        parents = Parent.objects.get(pk=obj.pk)
+        parents = Parent.objects.get(student_id=obj.pk)
         ws.append([obj.pk,
                    f'{obj.first_name} {obj.last_name} {obj.patronymic}',  # ФИО
                    f'{obj.gender}',  # Пол
@@ -122,9 +122,21 @@ def download_table(request):
 
 
 def download_document(request):
-    response = FileResponse('documents/tipovaya-forma_soglasie.doc')
-    response['Content-Disposition'] = 'attachment; filename="filename.doc"'
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Define text file name
+    filename = 'tipovaya-forma_soglasie.doc'
+    # Define the full file path
+    filepath = BASE_DIR + '\\static\\documents\\' + filename
+    # Open the file for reading content
+    response = FileResponse(open(filepath, 'rb'))
+    response['Content-Disposition'] = 'attachment; filename="your_file.doc"'
+    # Return the response value
     return response
+
+
+# def update_schools(request):
+#     data = parse_schools()
+#     return HttpResponse(data)
 
 
 def page_not_found(request):

@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'debug_toolbar',
+    'captcha',
+    'debug_toolbar'
+    # 'bs4',
+    # 'requests'
 ]
 
 MIDDLEWARE = [

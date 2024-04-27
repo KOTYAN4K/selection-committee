@@ -25,7 +25,7 @@ class Department(models.Model):
 
 class Applicant(models.Model):
     photo = models.ImageField(upload_to="applicants_photos/", default="applicants_photos/default.jpg",
-                              verbose_name="Фото", blank=True, null=True)
+                              verbose_name="Фото")
     last_name = models.CharField(max_length=100, verbose_name="Фамилия")
     first_name = models.CharField(max_length=100, verbose_name="Имя")
     patronymic = models.CharField(max_length=100, verbose_name="Отчество")

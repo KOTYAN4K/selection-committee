@@ -49,6 +49,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class ProfileUserForm(forms.ModelForm):
+    # photo = forms.ImageField(label='Фото', widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*'}))
     last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-input'}))
     first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
     patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'form-input'}))
@@ -61,7 +62,6 @@ class ProfileUserForm(forms.ModelForm):
             'last_name',
             'first_name',
             'patronymic',
-            'gender',
             'email',
             'school',
             'graduation_date',

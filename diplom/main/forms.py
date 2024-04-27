@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
 
@@ -6,6 +7,8 @@ from main.models import Applicant
 
 
 class ApplicantShortForm(forms.ModelForm):
+    captcha = CaptchaField()
+
     class Meta:
         model = Applicant
         fields = ('last_name',
@@ -16,11 +19,16 @@ class ApplicantShortForm(forms.ModelForm):
                   'school',
                   'graduation_date',
                   'email',
-                  )
+                  'captcha')
         widgets = {
-            'gender': forms.RadioSelect(attrs={'class': 'cool'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
-            'graduation_date': forms.DateInput(attrs={'type': 'date'}),
+            'last_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Фамилия'}),
+            'first_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Имя'}),
+            'patronymic': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Отчество'}),
+            'school': forms.Select(attrs={'class': 'input-control', 'placeholder': 'Школа'}),
+            'email': forms.EmailInput(attrs={'class': 'input-control', 'placeholder': 'Электронная почта'}),
+            'gender': forms.RadioSelect(attrs={'class': 'radio-input'}),
+            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'input-control date-input'}),
+            'graduation_date': forms.DateInput(attrs={'type': 'date', 'class': 'input-control date-input'}),
         }
 
     def clean_email(self):

@@ -1,3 +1,9 @@
+:root{
+    --main-color: #0072A3;
+    --secondary-color: #458dc6;
+    --main-text-color: #ffffff;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -10,17 +16,33 @@
     margin: 0 auto;
 }
 
-.header{
-    background: #37aba4;
+/* Основная страница */
 
+.header{
+    background: var(--main-color);
 }
 
 main{
-    margin-top: 35px;
+    background: var(--secondary-color);
+}
+
+.mainside{
+    padding: 35px 0;
+}
+
+.navigation-menu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 40px;
+}
+
+.navigation-menu img{
+    width: 35px;
 }
 
 .navigation-menu-list{
-    min-height: 40px;
+    width: 350px;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -30,58 +52,152 @@ main{
     color:white;
 }
 
-.departments{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+.exit-button{
+    display: inline;
+    background: none;
+    border: none;
+    color:white;
+    font-size: 16px;
+}
+
+.exit-button:hover{
+    cursor: pointer;
+}
+
+/*Конец основной страницы*/
+
+/* Форма подачи заявки на регистрацию */
+
+.registration_application{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    width: 500px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background: #f3f7fd;
+    color: #555;
+}
+
+/*.form-errors{*/
+/*    background: crimson;*/
+/*    border: 2px red solid;*/
+/*    color: white;*/
+/*}*/
+
+.registration_form{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 15px;
 }
 
-.department{
-    border: #37aba4 1px solid;
-    padding: 50px 25px;
-    text-align: center;
-}
-
-.department h3,
-.department p{
-    color: black;
-}
-
-footer{
-    position: relative;
-    bottom: 0;
-}
-
-/* таблица */
-
-.list{
+.input-field{
     width: 100%;
-    table-layout: auto;
-    border-collapse: collapse;
-    border: 3px solid #a9a9a9;
+    box-sizing: border-box;
 }
 
-.list thead tr{
-    background: darkgray;
-}
-
-.list tbody tr:nth-child(even){
-    background: #dadada;
-}
-
-.list td, .list th{
+.input-control{
+    width: 100%;
     padding: 10px;
-    border: 1px #a9a9a9 solid;
-    font-weight: normal;
+    display: block;
+    border: 1px solid #c4d8dc;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    color: #555;
+    font: 400 0.875rem / 1.875rem "Open Sans", sans-serif;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
 }
 
-.list thead tr th:nth-child(1),
-.list tbody tr td:nth-child(1){
-    width: 20px;
+.captcha{
+    width: 30%;
+    float: left;
 }
+
+.captcha ~ input{
+    margin-left: 30px;
+    width: 30%;
+    padding: 5px;
+    border: 1px solid #c4d8dc;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    color: #555;
+    font: 400 0.875rem / 1.875rem "Open Sans", sans-serif;
+    transition: all 0.2s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.input-control:hover,
+.captcha ~ input:hover{
+    border: 1px solid #a1a1a1;
+}
+
+.input-control:focus,
+.captcha ~ input:focus{
+    border: 1px solid #a1a1a1;
+    outline: none;
+}
+
+.radio-input{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #a1a1a1;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.radio-input input{
+    display: none;
+}
+
+.radio-input label{
+    display: inline-block;
+
+    width: 100%;
+    background: #dddddd;
+    color: #717171;
+    text-align: center;
+    padding: 10px 0;
+    box-sizing: border-box;
+}
+
+input[type="radio"]:checked ~ label{
+    background: var(--main-color);
+    color: var(--main-text-color);
+}
+
+input[type="checkbox"]{
+    padding: 12px;
+}
+
+.form-control-submit-btn{
+    display: inline-block;
+    width: 100%;
+    height: 3.125rem;
+    border: 1px solid #5f4dee;
+    border-radius: 1.5rem;
+    background-color: var(--main-color);
+    color: #fff;
+    font: 700 0.875rem / 0 "Open Sans", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.input-errors{
+    color: #ff4141;
+}
+
+/* Личный кабинет */
 
 .side-menu{
-    background: #28918d;
+    background: var(--secondary-color);
     margin-right: 25px;
     height: 95vh;
     float: left;
@@ -101,5 +217,10 @@ footer{
 }
 
 .side-menu li:hover{
-    background: #37aba4;
+    background: var(--main-color)
+}
+
+footer{
+    position: relative;
+    bottom: 0;
 }
