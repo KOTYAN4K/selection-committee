@@ -1,14 +1,20 @@
+:root{
+    --main-color: #0072A3;
+    --secondary-color: #458dc6;
+    --main-text-color: #ffffff;
+}
+
 #header, .module caption{
-    background: #37aba4;
+    background: var(--main-color);
 }
 
 .theme-toggle svg.theme-icon-when-auto, .theme-toggle svg.theme-icon-when-dark, .theme-toggle svg.theme-icon-when-light {
     fill: var(--header-link-color);
-    color: #37aba4;
+    color: var(--main-color);
 }
 
 div.breadcrumbs{
-    background: #28918d;
+    background: var(--secondary-color);
 }
 
 .object-tools a.download-table {
@@ -22,5 +28,5 @@ div.breadcrumbs{
 }
 
 .module h2{
-    background: #28918d;
+    background: var(--secondary-color);
 }

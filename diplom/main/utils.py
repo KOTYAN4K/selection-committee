@@ -1,24 +1,24 @@
-# from bs4 import BeautifulSoup
-# import requests
+from bs4 import BeautifulSoup
+import requests
 from django.core.mail import send_mail
 
 from account.models import User
 from diplom.settings import EMAIL_HOST_USER
-from main.models import School, Parent, Document
+from main.models import School, Parent, Document, Admission
 
 
-# def parse_schools():
-#     # Очистите существующие данные
-#     School.objects.all().delete()
-#
-#     url = 'https://edu.tatar.ru/n_chelny/type/1'
-#     response = requests.get(url)
-#     soup = BeautifulSoup(response.text, 'html.parser')
-#
-#     for schools in soup.find_all('ul', class_='your-class'):
-#         for school in schools.find_all('li'):
-#             name = school.school.get_text().strip()
-#             School.objects.create(name).save()
+def parse_schools():
+    # Очистите существующие данные
+    School.objects.all().delete()
+
+    url = 'https://edu.tatar.ru/n_chelny/type/1'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    for schools in soup.find_all('ul', class_='edu-list col-md-4'):
+        for school in schools.find_all('li'):
+            name = school.get_text()
+            School.objects.create(name=name).save()
 
 
 def create_account(applicant):
@@ -29,7 +29,8 @@ def create_account(applicant):
         new_user.email = applicant.email
         new_user.student = applicant
         new_user.save()
-
+        applicant.change_status_to_answered()
+        applicant.save()
         send_mail(
             "Ваша заявка принята.",
             f"""Ваша заявка принята, приступайте к заполнению вашей личной страницы с документами.
@@ -44,7 +45,9 @@ def create_account(applicant):
         )
         parents = Parent.objects.create(student=applicant)
         documents = Document.objects.create(student=applicant)
+        admission = Admission.objects.create(applicant=applicant)
         parents.save()
         documents.save()
+        admission.save()
         return True
     return False

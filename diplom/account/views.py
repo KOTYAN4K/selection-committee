@@ -66,13 +66,16 @@ class DocumentsProfileView(UpdateView, LoginRequiredMixin):
         return Document.objects.get(student=self.request.user.student)
 
 
-class AdmissionProfileView(CreateView, LoginRequiredMixin):
+class AdmissionProfileView(UpdateView, LoginRequiredMixin):
     model = Admission
     template_name = 'account/profile_edit.html'
     form_class = AdmissionEditForm
 
     def get_success_url(self):
         return reverse_lazy('account:profile', args=[self.request.user.id])
+
+    def get_object(self, queryset=None):
+        return Admission.objects.get(applicant=self.request.user.student)
 
 
 class RankProfileView(ListView, LoginRequiredMixin):

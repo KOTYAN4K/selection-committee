@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'captcha',
-    'debug_toolbar'
-    # 'bs4',
-    # 'requests'
+    'debug_toolbar',
+    'bs4',
+    'requests',
+    'django_select2'
 ]
 
 MIDDLEWARE = [
@@ -165,3 +166,5 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
+
+

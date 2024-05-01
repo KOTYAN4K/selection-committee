@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 
 class School(models.Model):
@@ -35,9 +36,13 @@ class Applicant(models.Model):
     birth_date = models.DateField(verbose_name="Дата рождения")
     email = models.EmailField(verbose_name="Эл.Почта")
     address = models.CharField(max_length=255, verbose_name="Адрес проживания")
-    school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа", blank=True, null=True)
-    graduation_date = models.DateField(verbose_name="Дата окончания школы", auto_now=False, auto_now_add=False,
-                                       blank=True, null=True)
+    # school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа",
+    #                            default=None, blank=True, null=True)
+    school = models.CharField(max_length=255, verbose_name="Школа")
+    YEAR_CHOICES = [(r, r) for r in range(datetime.date.today().year - 24, datetime.date.today().year + 1)]
+
+    graduation_date = models.IntegerField(choices=YEAR_CHOICES, verbose_name="Дата окончания школы",
+                                          default="Дата окончания школы")
     status = models.CharField(max_length=20, verbose_name="Статус заявки",
                               choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
                               default='watching')
@@ -49,6 +54,10 @@ class Applicant(models.Model):
     class Meta:
         verbose_name = "Заявка на регистрацию"
         verbose_name_plural = "Заявки на регистрацию"
+
+    def change_status_to_answered(self):
+        self.status = 'answered'
+        self.save()
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
@@ -108,27 +117,45 @@ class InternalExam(models.Model):
 class Admission(models.Model):
     applicant = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
                                      related_name="admission")
-    department = models.ForeignKey('Department', on_delete=models.CASCADE, verbose_name="Отделение")
-    admission_date = models.DateField(verbose_name="Дата поступления")
-    out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет")
-    number_of_5 = models.IntegerField(default=0, verbose_name="Количество пятерок")
-    number_of_4 = models.IntegerField(default=0, verbose_name="Количество четверок")
-    number_of_3 = models.IntegerField(default=0, verbose_name="Количество троек")
-    average_score = models.FloatField(default=0.0, verbose_name="Средний балл")
-    received_receipt = models.BooleanField(default=False, verbose_name="Получил расписку")
-    application_status = models.CharField(max_length=50, verbose_name="Статус заявки")
-    internal_exam_conducted = models.BooleanField(default=False, verbose_name="Внутренний экзамен проведен")
-    application_number = models.IntegerField(verbose_name="Номер заявления")
-    documents_collected = models.BooleanField(default=False, verbose_name="Документы забраны")
-    application_in_gov_services = models.BooleanField(default=False, verbose_name="Заявление в гос. услугах")
+    department = models.ManyToManyField('Department', verbose_name="Отделение",
+                                        blank=True, null=True)
+    admission_date = models.DateField(verbose_name="Дата поступления", auto_now=True)
+    number_of_5 = models.IntegerField(default=0, verbose_name="Количество пятерок", blank=True, null=True)
+    number_of_4 = models.IntegerField(default=0, verbose_name="Количество четверок", blank=True, null=True)
+    number_of_3 = models.IntegerField(default=0, verbose_name="Количество троек", blank=True, null=True)
+    average_score = models.DecimalField(default=0.0, max_digits=5, decimal_places=2,
+                                        verbose_name="Средний балл", blank=True, null=True)
+    application_status = models.CharField(max_length=50, verbose_name="Статус заявки",
+                                          choices=(("watching", "Рассмотрение"), ("accepted", "Принят")),
+                                          default='watching')
+    out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет", blank=True, null=True)
+    received_receipt = models.BooleanField(default=False, verbose_name="Получил расписку", blank=True, null=True)
+    internal_exam_conducted = models.BooleanField(default=False, verbose_name="Внутренний экзамен проведен",
+                                                  blank=True, null=True)
+    documents_collected = models.BooleanField(default=False, verbose_name="Документы забраны", blank=True, null=True)
+    application_in_gov_services = models.BooleanField(default=False, verbose_name="Заявление в гос. услугах",
+                                                      blank=True, null=True)
     internal_exam = models.OneToOneField(InternalExam, on_delete=models.CASCADE, verbose_name="Внутренний экзамен",
                                          related_name="admission", null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки', blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления', blank=True, null=True)
 
     class Meta:
         verbose_name = "Поступление"
         verbose_name_plural = "Поступления"
 
+    def change_status_to_answered(self):
+        self.application_status = 'accepted'
+        self.save()
+
+    def save(self, *args, **kwargs):
+        total_scores = self.number_of_5 * 5 + self.number_of_4 * 4 + self.number_of_3 * 3
+        total_subjects = self.number_of_5 + self.number_of_4 + self.number_of_3
+
+        if total_subjects != 0:
+            self.average_score = total_scores / total_subjects
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return self.applicant
+        return f'{self.applicant}'

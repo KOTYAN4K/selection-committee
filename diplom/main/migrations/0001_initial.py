@@ -114,7 +114,6 @@ class Migration(migrations.Migration):
                 ('received_receipt', models.BooleanField(default=False, verbose_name='Получил расписку')),
                 ('application_status', models.CharField(max_length=50, verbose_name='Статус заявки')),
                 ('internal_exam_conducted', models.BooleanField(default=False, verbose_name='Внутренний экзамен проведен')),
-                ('application_number', models.IntegerField(verbose_name='Номер заявления')),
                 ('documents_collected', models.BooleanField(default=False, verbose_name='Документы забраны')),
                 ('application_in_gov_services', models.BooleanField(default=False, verbose_name='Заявление в гос. услугах')),
                 ('applicant', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='admission', to='main.applicant', verbose_name='Абитуриент')),

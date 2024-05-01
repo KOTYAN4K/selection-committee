@@ -1,15 +1,15 @@
-import mimetypes
 import os
 
-from django.http import HttpResponse, FileResponse
-from django.shortcuts import render
+from django.http import HttpResponse, FileResponse, JsonResponse
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
 
+
 from main.forms import ApplicantShortForm
 from main.models import Department, Applicant, Parent, School
-# from main.utils import parse_schools
+from main.utils import parse_schools
 
 
 # Create your views here.
@@ -26,10 +26,6 @@ class TestFormView(CreateView):
     template_name = 'main/form.html'
     form_class = ApplicantShortForm
     success_url = reverse_lazy('home')
-
-
-# class ApplicantsView(ListView):
-#     template_name = ''
 
 
 def download_table(request):
@@ -111,7 +107,6 @@ def download_table(request):
                    'Дата выдачи'
                    ])
 
-
     # Создаём HTTP-ответ для скачивания файла
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=Applicants.xlsx'
@@ -134,9 +129,20 @@ def download_document(request):
     return response
 
 
-# def update_schools(request):
-#     data = parse_schools()
-#     return HttpResponse(data)
+def update_schools(request):
+    parse_schools()
+    return redirect('home')
+
+
+def autocomplete(request):
+    if 'term' in request.GET:
+        qs = School.objects.filter(name__icontains=request.GET.get('term'),)
+        title = []
+        for school in qs:
+            title.append(school.name)
+        return JsonResponse(title, safe=False)
+
+    render(request, 'main/form.html')
 
 
 def page_not_found(request):

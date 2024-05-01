@@ -18,7 +18,7 @@ class ApplicantAdmin(admin.ModelAdmin):
                     'status',
                     'updated_at',
                     'created_at')
-    ordering = ('-created_at', '-updated_at', '-status', 'last_name', 'first_name', 'patronymic')
+    ordering = ('-status', '-created_at', '-updated_at', 'last_name', 'first_name', 'patronymic')
     list_editable = ('status',)
     list_filter = ('gender', 'status', 'school', 'created_at', 'updated_at')
     list_display_links = ('last_name', 'first_name', 'patronymic')
@@ -41,28 +41,28 @@ class ApplicantAdmin(admin.ModelAdmin):
 
 @admin.register(Admission)
 class AdmissionAdmin(admin.ModelAdmin):
-    list_display = ('applicant',
-                    'department',
+    list_display = ('id',
+                    'applicant',
                     'admission_date',
-                    'out_of_budget',
                     'number_of_5',
                     'number_of_4',
                     'number_of_3',
                     'average_score',
-                    'received_receipt',
                     'application_status',
                     'internal_exam_conducted',
-                    'application_number',
+                    'received_receipt',
+                    'out_of_budget',
                     'documents_collected',
                     'application_in_gov_services',
                     'internal_exam'
                     )
-    ordering = ('application_status', '-updated_at', 'applicant', )
-    list_editable = ('application_status',)
+    ordering = ('application_status', '-updated_at', 'applicant',)
+    list_editable = ('application_status', 'out_of_budget', 'received_receipt', 'documents_collected',
+                     'application_in_gov_services', 'internal_exam_conducted',)
     list_filter = ('department', 'application_status', 'number_of_5', 'number_of_4', 'number_of_3', 'created_at',
                    'updated_at', 'internal_exam_conducted', 'application_in_gov_services')
     list_display_links = ('applicant',)
-    search_fields = ('applicant', )
+    search_fields = ('applicant',)
 
 
 admin.site.register(InternalExam)
@@ -70,6 +70,3 @@ admin.site.register(Document)
 admin.site.register(Parent)
 # admin.site.register(School)
 # admin.site.register(Department)
-
-
-

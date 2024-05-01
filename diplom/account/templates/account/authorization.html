@@ -3,34 +3,36 @@
 {% block title %}Вход на сайт{% endblock %}
 
 {% block content %}
-	<section class="full_screen">
-		<div class="bg_page_register wrapper">
-			<div class="content autorizaton_form">
-				<h2 class="center">Вход в личный кабинет</h2>
 
-				<form class="registration_form" method="POST">
-                    {% csrf_token %}
+    <div class="registration_application">
+        <h2 class="center">Вход в личный кабинет</h2>
 
-                    <div class="form-error">{{ form.non_field_errors }}</div>
+        <form class="registration_form" method="POST">
+            {% csrf_token %}
 
-                    {% for f in form %}
-                        {% if f.label == 'Пароль' %}
-                        <div class="password">
-                            <label class="hidden" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}
-                            <a href="#" class="password-control" onclick="return show_hide_password(this);"></a>
-                        </div>
-                        {% else %}
-                            <label class="hidden" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}
-                            <div class="form-error">{{ f.errors }}</div>
-                        {% endif %}
+            <div class="form-error">{{ form.non_field_errors }}</div>
 
-                    {% endfor %}
-					<button class="button">Войти</button>
+            {% for f in form %}
+                {% if f.label == 'Пароль' %}
+                    <div class="input-field">
+                        <label hidden="hidden" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                        {{ f }}
+                        <div class="input-errors">{{ f.errors }}</div>
+                    </div>
+                {% else %}
+                    <div class="input-field">
+                        <label hidden="hidden" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                        {{ f }}
+                        <div class="input-errors">{{ f.errors }}</div>
+                    </div>
+                {% endif %}
 
-                    <a href="{% url 'account:password_reset' %}">Забыли пароль?</a>
-                    <a href="{% url 'form' %}">Перед входом на сайт, необходимо подать заявку на регистрацию.</a>
-				</form>
-			</div>
-        </div>
-    </section>
+            {% endfor %}
+            <button class="form-control-submit-btn">Войти</button>
+
+            <a href="{% url 'account:password_reset' %}">Забыли пароль?</a>
+            <a href="{% url 'form' %}">Перед входом на сайт, необходимо подать заявку на регистрацию.</a>
+        </form>
+    </div>
+
 {% endblock %}

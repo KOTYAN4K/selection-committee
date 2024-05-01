@@ -8,9 +8,9 @@ from main.models import Applicant, Parent, Document, Admission
 
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Логин/Почта'}))
+        attrs={'class': 'input-control', 'placeholder': 'Логин/Почта'}))
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(
-        attrs={'class': 'form-input', 'id': 'password-input', 'placeholder': 'Пароль'}))
+        attrs={'class': 'input-control', 'id': 'password-input', 'placeholder': 'Пароль'}))
 
     class Meta:
         model = User
@@ -19,11 +19,11 @@ class LoginUserForm(AuthenticationForm):
 
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput(
-        attrs={'class': 'form-input', 'placeholder': 'Логин'}))
+        attrs={'class': 'input-control', 'placeholder': 'Логин'}))
     password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(
-        attrs={'class': 'form-input', 'id': 'password-input', 'placeholder': 'Пароль'}))
+        attrs={'class': 'input-control', 'id': 'password-input', 'placeholder': 'Пароль'}))
     password2 = forms.CharField(label='Повтор пароля', widget=forms.PasswordInput(
-        attrs={'class': 'form-input', 'placeholder': 'Повтор пароля'}))
+        attrs={'class': 'input-control', 'placeholder': 'Повтор пароля'}))
 
     class Meta:
         model = get_user_model()
@@ -32,7 +32,7 @@ class CustomUserCreationForm(UserCreationForm):
             'email': 'E-mail',
         }
         widgets = {
-            'email': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'E-mail'}),
+            'email': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'E-mail'}),
         }
 
     def clean_email(self):
@@ -63,14 +63,11 @@ class ProfileUserForm(forms.ModelForm):
             'first_name',
             'patronymic',
             'email',
-            'school',
-            'graduation_date',
             'address',
         )
         widgets = {
             'photo': forms.FileInput(attrs={'class': 'form-input'}),
             'gender': forms.Select(attrs={'disabled': 'disabled'}),
-            'graduation_date': forms.TextInput(attrs={'type': 'date', 'disabled': 'disabled'}),
             'address': forms.Textarea(attrs={'class': 'form-input'}),
         }
 
@@ -118,17 +115,10 @@ class AdmissionEditForm(forms.ModelForm):
 
         fields = (
             'department',
-            'admission_date',
-            'out_of_budget',
             'number_of_5',
             'number_of_4',
             'number_of_3',
-            'average_score',
             'received_receipt',
-            'application_status',
             'internal_exam_conducted',
-            'application_number',
-            'documents_collected',
-            'application_in_gov_services',
-            'internal_exam',
         )
+

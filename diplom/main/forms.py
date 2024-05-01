@@ -1,9 +1,10 @@
 from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
+from django_select2.forms import ModelSelect2Widget, Select2Widget
 
 from diplom import settings
-from main.models import Applicant
+from main.models import Applicant, School
 
 
 class ApplicantShortForm(forms.ModelForm):
@@ -24,11 +25,16 @@ class ApplicantShortForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Фамилия'}),
             'first_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Имя'}),
             'patronymic': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Отчество'}),
-            'school': forms.Select(attrs={'class': 'input-control', 'placeholder': 'Школа'}),
+            'school': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Школа'}),
             'email': forms.EmailInput(attrs={'class': 'input-control', 'placeholder': 'Электронная почта'}),
             'gender': forms.RadioSelect(attrs={'class': 'radio-input'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'input-control date-input'}),
-            'graduation_date': forms.DateInput(attrs={'type': 'date', 'class': 'input-control date-input'}),
+            'birth_date': forms.TextInput(attrs={'class': 'input-control date-input',
+                                                 'placeholder': "Дата рождения",
+                                                 'onfocus': "(this.type='date')",
+                                                 'onblur': "(this.type='text')"}),
+            'graduation_date': forms.Select(attrs={'class': 'input-control select-date-input',
+                                                   'data-placeholder': 'Год окончания школы'
+                                                   })
         }
 
     def clean_email(self):
