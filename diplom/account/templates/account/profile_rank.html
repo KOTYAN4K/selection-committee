@@ -3,11 +3,39 @@
 {% block title %}Рейтинг{% endblock %}
 
 {% block content %}
-    <h1>Профиль</h1>
+    <h1>Рейтинг</h1>
     <div>
         {% for object in object_list %}
-        	{{ object.applicant }}
-        {% endfor %}
 
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Отчество</th>
+                    <th>Пол</th>
+                    <th>Средний бал</th>
+                    <th>Дата отправки</th>
+                    <th>Оригинал/копия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for foo in object %}
+
+                    <tr {% if foo.applicant == user.student %} class="current-user" {% endif %}>
+                        <td>{{ foo.applicant.first_name }}</td>
+                        <td>{{ foo.applicant.last_name }}</td>
+                        <td>{{ foo.applicant.patronymic }}</td>
+                        <td>{{ foo.applicant.get_gender }}</td>
+                        <td>{{ foo.average_score }}</td>
+                        <td>{{ foo.admission_date }}</td>
+                        <td>{{ foo.get_original_or_copy }}</td>
+                    </tr>
+
+                    </tbody>
+                {% endfor %}
+            </table>
+
+        {% endfor %}
     </div>
 {% endblock %}

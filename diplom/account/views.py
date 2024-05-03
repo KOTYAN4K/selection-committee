@@ -1,13 +1,13 @@
-from django.contrib.auth import get_user_model
+from decimal import Decimal
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView
 
 from account.forms import CustomUserCreationForm, LoginUserForm, ProfileUserForm, ParentsEditForm, DocumentEditForm, \
     AdmissionEditForm
-from main.models import Applicant, Parent, Document, Admission
+from main.models import Applicant, Parent, Document, Admission, Department
 
 
 class LoginUser(LoginView):
@@ -81,3 +81,13 @@ class AdmissionProfileView(UpdateView, LoginRequiredMixin):
 class RankProfileView(ListView, LoginRequiredMixin):
     template_name = 'account/profile_rank.html'
     model = Admission
+
+    def get_queryset(self):
+        average_score = '4.0'
+        departments = []
+        admission = Admission.objects.filter(department__name=Department.objects.all()[0],
+                                             application_status__contains='accepted',
+                                             average_score__gte=Decimal(average_score)).order_by('average_score')[:25]
+        departments.append(admission)
+
+        return departments

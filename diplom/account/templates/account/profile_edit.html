@@ -2,16 +2,24 @@
 
 {% block content %}
     <h1>Профиль</h1>
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" class="edit-form">
         {% csrf_token %}
 
         <div class="form-error">{{ form.non_field_errors }}</div>
 
         {% for f in form %}
-            <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
-            <div class="form-error">{{ f.errors }}</div>
+            {% if f %}
+                <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                <p><a href="{% url 'download_document' %}">Скачать согласие</a></p>
+                <div class="form-error">{{ f.errors }}</div>
+            {% else %}
+                <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                <div class="form-error">{{ f.errors }}</div>
+            {% endif %}
         {% endfor %}
         <button class="button">Сохранить</button>
 
     </form>
+
+
 {% endblock %}

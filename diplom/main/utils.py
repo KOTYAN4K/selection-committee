@@ -51,3 +51,13 @@ def create_account(applicant):
         admission.save()
         return True
     return False
+
+
+def send_invite_email(email, subject, message):
+    send_mail(
+        subject,
+        message,
+        EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )

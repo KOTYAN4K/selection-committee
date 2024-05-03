@@ -1,6 +1,7 @@
 :root{
     --main-color: #0072A3;
     --secondary-color: #458dc6;
+    --third-color: #7cbbf1;
     --main-text-color: #ffffff;
 }
 
@@ -219,6 +220,39 @@ input[type="checkbox"]{
 .side-menu li:hover{
     background: var(--main-color)
 }
+
+.table{
+    color: #1b1b1b;
+    width: 80%;
+    background: white;
+}
+
+.table th{
+    color:white;
+    padding: 10px;
+}
+
+.table thead tr{
+    background: var(--secondary-color);
+}
+
+.table tr{
+    background: #aaaaaa;
+}
+
+.table td{
+    padding: 10px;
+}
+
+.table tr.current-user{
+
+    background: var(--third-color);
+}
+
+.edit-form{
+    width: 60%;
+}
+
 
 footer{
     position: relative;

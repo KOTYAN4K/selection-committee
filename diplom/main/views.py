@@ -145,5 +145,98 @@ def autocomplete(request):
     render(request, 'main/form.html')
 
 
+def export_data(request):
+    if request.method == 'GET':
+        form = ApplicantShortForm()
+
+        return render(request, 'admin/export_data.html')
+
+    if request.method == 'POST':
+        queryset = Applicant.objects.all()
+
+        # Создайте новый файл Excel
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Студенты'
+
+        ws.append([
+            '№ п/п',
+            'ФИО',
+            'пол',
+            'Кол "5"',
+            'Кол "4"',
+            'Кол "3"',
+            'Снилс',
+            'инн',
+            'средн балл',
+            'оригинал/копия',
+            'внебюджет',
+            'Документы | забрали',
+            'Получил ли расписку',
+            'школа',
+            'год окончания',
+            'ФИС',
+            'номер заявления',
+            'Электронное заявление',
+            'Дата ЭЗ',
+            'Дата и время проведения испытания',
+            'Статус',
+            'Вступительный экзамен',
+            'Дата рождения',
+            'Личный телефон',
+            'Мама',
+            'Телефон мамы',
+            'Папа',
+            'Телефон папы',
+            'номер паспорта',
+            'Кем выдан',
+            'Дата выдачи'
+        ])
+
+        # Добавьте данные из базы данных в файл Excel
+        for obj in queryset:
+            parents = Parent.objects.get(student_id=obj.pk)
+            ws.append([obj.pk,
+                       f'{obj.first_name} {obj.last_name} {obj.patronymic}',  # ФИО
+                       f'{obj.gender}',  # Пол
+                       'Кол "5"',
+                       'Кол "4"',
+                       'Кол "3"',
+                       'Снилс',
+                       'инн',
+                       'средн балл',
+                       'оригинал/копия',
+                       'внебюджет',
+                       'Документы | забрали',
+                       'Получил ли расписку',
+                       f'{obj.school}',
+                       f'{obj.graduation_date}',
+                       'ФИС',
+                       'номер заявления',
+                       'Электронное заявление',
+                       'Дата ЭЗ',
+                       'Дата и время проведения испытания',
+                       'Статус',
+                       'Вступительный экзамен',
+                       'Дата рождения',
+                       'Личный телефон',
+                       f'{parents.mother_full_name}',
+                       f'{parents.mother_phone}',
+                       f'{parents.father_full_name}',
+                       f'{parents.father_phone}',
+                       'номер паспорта',
+                       'Кем выдан',
+                       'Дата выдачи'
+                       ])
+
+        # Создаём HTTP-ответ для скачивания файла
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=Applicants.xlsx'
+
+        # Сохраняем файл Excel в HTTP-ответ
+        wb.save(response)
+        return response
+
+
 def page_not_found(request):
     return HttpResponse("404 NOT FOUND")

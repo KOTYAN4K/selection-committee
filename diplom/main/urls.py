@@ -9,4 +9,5 @@ urlpatterns = [
     path('download-document/', views.download_document, name='download_document'),
     path('update-schools/', views.update_schools, name='update-schools'),
     path('autocomplete/', views.autocomplete, name='autocomplete'),
+    path('admin/export/', views.export_data, name='export-csv'),
 ]

@@ -17,7 +17,6 @@
 
 .header{
     background: var(--main-color);
-
 }
 
 .mainside{
@@ -79,6 +78,7 @@
 .ui-menu{
     overflow: scroll;
 }
+
 
 footer{
     position: relative;

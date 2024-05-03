@@ -35,6 +35,7 @@ class Applicant(models.Model):
                               default='male')
     birth_date = models.DateField(verbose_name="Дата рождения")
     email = models.EmailField(verbose_name="Эл.Почта")
+    phone = models.CharField(max_length=20, verbose_name='Номер телефона студента', blank=True, null=True)
     address = models.CharField(max_length=255, verbose_name="Адрес проживания")
     # school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа",
     #                            default=None, blank=True, null=True)
@@ -59,8 +60,14 @@ class Applicant(models.Model):
         self.status = 'answered'
         self.save()
 
+    def get_gender(self):
+        if self.gender == 'male':
+            return 'Мужской'
+        else:
+            return 'Женский'
+
     def __str__(self):
-        return f"{self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
+        return f"{self.id} {self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
 
 
 class Document(models.Model):
@@ -72,7 +79,6 @@ class Document(models.Model):
     issued_by = models.CharField(max_length=255, verbose_name="Кем выдан", blank=True, null=True)
     issue_date = models.DateField(verbose_name="Дата выдачи", blank=True, null=True)
     certificate = models.CharField(max_length=255, verbose_name="Свидетельство", blank=True, null=True)
-    original_or_copy = models.BooleanField(verbose_name="Оригинал или копия", blank=True, null=True, default=False)
     FIS = models.CharField(max_length=255, verbose_name="ФИС", blank=True, null=True)
 
     class Meta:
@@ -102,16 +108,26 @@ class Parent(models.Model):
 
 class InternalExam(models.Model):
     exam_date = models.DateTimeField('Дата экзамена', blank=True)
-    exam_result = models.CharField('Результаты экзамена', max_length=255, blank=True)
-    student = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Студент",
-                                   related_name='internal_exam')
+    students = models.ManyToManyField('Applicant', verbose_name="Студент")
 
     class Meta:
-        verbose_name = 'Внутренний экзамен'
-        verbose_name_plural = 'Внутренний экзамен'
+        verbose_name = 'Журнал вступительных экзаменов'
+        verbose_name_plural = 'Журналы вступительных экзаменов'
 
     def __str__(self):
-        return str(self.student)
+        return f'Вступительный экзамен от {self.exam_date.date()}'
+
+
+class Interview(models.Model):
+    interview_date = models.DateTimeField('Дата собеседования', blank=True)
+    students = models.ManyToManyField('Applicant', verbose_name="Студент")
+
+    class Meta:
+        verbose_name = 'Журнал собеседований'
+        verbose_name_plural = 'Журналы собеседований'
+
+    def __str__(self):
+        return f'Собеседование от {self.interview_date.date()}'
 
 
 class Admission(models.Model):
@@ -125,10 +141,13 @@ class Admission(models.Model):
     number_of_3 = models.IntegerField(default=0, verbose_name="Количество троек", blank=True, null=True)
     average_score = models.DecimalField(default=0.0, max_digits=5, decimal_places=2,
                                         verbose_name="Средний балл", blank=True, null=True)
+    exam_result = models.CharField('Результаты экзамена', max_length=255, blank=True)
     application_status = models.CharField(max_length=50, verbose_name="Статус заявки",
                                           choices=(("watching", "Рассмотрение"), ("accepted", "Принят")),
                                           default='watching')
+    original_or_copy = models.BooleanField(verbose_name="Оригинал или копия", blank=True, null=True, default=False)
     out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет", blank=True, null=True)
+
     received_receipt = models.BooleanField(default=False, verbose_name="Получил расписку", blank=True, null=True)
     internal_exam_conducted = models.BooleanField(default=False, verbose_name="Внутренний экзамен проведен",
                                                   blank=True, null=True)
@@ -147,6 +166,12 @@ class Admission(models.Model):
     def change_status_to_answered(self):
         self.application_status = 'accepted'
         self.save()
+
+    def get_original_or_copy(self):
+        if self.original_or_copy:
+            return '✔'
+        else:
+            return '✖'
 
     def save(self, *args, **kwargs):
         total_scores = self.number_of_5 * 5 + self.number_of_4 * 4 + self.number_of_3 * 3

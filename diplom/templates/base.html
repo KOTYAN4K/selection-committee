@@ -70,6 +70,8 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.5/inputmask.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.5/jquery.inputmask.min.js"></script>
 
 <script>
     $(function () {
@@ -77,6 +79,27 @@
             source: '{% url 'autocomplete' %}',
             minLength: 2
         });
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        // Применение маски к полю СНИЛС
+        $('[name="SNILS"]').inputmask('999-999-999 99');
+
+        // Применение маски к полю ИНН
+        $('[name="INN"]').inputmask('999999999999');
+
+        // Применение маски к полю номера паспорта
+        $('[name="passport_number"]').inputmask('9999 999999');
+
+        // Применение маски к полю даты выдачи
+        $('[name="issue_date"]').inputmask('99.99.9999');
+
+        // Применение маски к полю свидетельства
+        $('[name="certificate"]').inputmask('aaa 9999 №999999');
+
+        // Применение маски к полю ФИС
+        $('[name="FIS"]').inputmask('999-999-999-999');
     });
 </script>
 </body>

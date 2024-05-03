@@ -1,3 +1,5 @@
+from _ast import pattern
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
@@ -49,7 +51,6 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class ProfileUserForm(forms.ModelForm):
-    # photo = forms.ImageField(label='Фото', widget=forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*'}))
     last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-input'}))
     first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'form-input'}))
     patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'form-input'}))
@@ -63,7 +64,9 @@ class ProfileUserForm(forms.ModelForm):
             'first_name',
             'patronymic',
             'email',
+            'phone',
             'address',
+            'consent'
         )
         widgets = {
             'photo': forms.FileInput(attrs={'class': 'form-input'}),
@@ -99,13 +102,32 @@ class DocumentEditForm(forms.ModelForm):
                   'issued_by',
                   'issue_date',
                   'certificate',
-                  'original_or_copy',
                   'FIS')
 
         widgets = {
+            'SNILS': forms.TextInput(attrs={'class': '',
+                                            'placeholder': '___-___-___ __',
+                                            # 'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
+                                            'data-mask': '999-999-999 99'}),
+            'INN': forms.TextInput(attrs={'class': '',
+                                          'placeholder': '____________',
+                                          'pattern': '\d{12}',
+                                          'data-mask': '999999999999'}),
+            'passport_number': forms.TextInput(attrs={'class': '',
+                                                      'placeholder': '____ _______',
+                                                      'pattern': '\d{4} \d{6}',
+                                                      'data-mask': '9999 999999'}),
             'issue_date': forms.DateInput(attrs={'type': 'date'}),
-            'issued_by': forms.Textarea(),
-            'original_or_copy': forms.CheckboxInput(),
+            'issued_by': forms.Textarea(attrs={'class': '',
+                                               'pattern': '[\w\s,]+'}),
+            'certificate': forms.TextInput(attrs={'class': '',
+                                                  'placeholder': '____ ____ №_______',
+                                                  'pattern': '[\w\s]+ \d{4} №\d+',
+                                                  'data-mask': 'aaa 9999 №999999'}),
+            'FIS': forms.TextInput(attrs={'class': '',
+                                          'placeholder': '___-___-___-___',
+                                          'pattern': '\d{3}-\d{3}-\d{3}-\d{3}',
+                                          'data-mask': '999-999-999-999'}),
         }
 
 
@@ -115,10 +137,6 @@ class AdmissionEditForm(forms.ModelForm):
 
         fields = (
             'department',
-            'number_of_5',
-            'number_of_4',
-            'number_of_3',
             'received_receipt',
             'internal_exam_conducted',
         )
-
