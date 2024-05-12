@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3-&e9*by)dp1ejycs21jz10o-9e4ywdzzt-k7zg#zluw!r#0#w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -45,8 +45,7 @@ INSTALLED_APPS = [
     'captcha',
     'debug_toolbar',
     'bs4',
-    'requests',
-    'django_select2'
+    'requests'
 ]
 
 MIDDLEWARE = [
@@ -80,6 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'diplom.wsgi.application'
+
 
 
 # Database

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 import datetime
 
@@ -40,10 +42,9 @@ class Applicant(models.Model):
     # school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа",
     #                            default=None, blank=True, null=True)
     school = models.CharField(max_length=255, verbose_name="Школа")
-    YEAR_CHOICES = [(r, r) for r in range(datetime.date.today().year - 24, datetime.date.today().year + 1)]
+    YEAR_CHOICES = [(f'{r}', f'{r}') for r in range(datetime.date.today().year - 3, datetime.date.today().year + 1)]
 
-    graduation_date = models.IntegerField(choices=YEAR_CHOICES, verbose_name="Дата окончания школы",
-                                          default="Дата окончания школы")
+    graduation_date = models.CharField(max_length=20, choices=YEAR_CHOICES, verbose_name="Дата окончания школы",)
     status = models.CharField(max_length=20, verbose_name="Статус заявки",
                               choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
                               default='watching')
@@ -59,6 +60,11 @@ class Applicant(models.Model):
     def change_status_to_answered(self):
         self.status = 'answered'
         self.save()
+
+    def get_graduation_date(self):
+        return f'{self.graduation_date}'
+
+    get_graduation_date.short_description = 'Год окончания'
 
     def get_gender(self):
         if self.gender == 'male':
@@ -92,7 +98,8 @@ class Document(models.Model):
 
 
 class Parent(models.Model):
-    student = models.OneToOneField(Applicant, on_delete=models.CASCADE, verbose_name="Ребёнок", blank=True, null=True)
+    student = models.OneToOneField(Applicant, on_delete=models.CASCADE, verbose_name="Ребёнок",
+                                   related_name="parents", blank=True, null=True)
     mother_full_name = models.CharField(max_length=255, verbose_name="ФИО матери", blank=True, null=True)
     mother_phone = models.CharField(max_length=20, verbose_name="Телефон матери", blank=True, null=True)
     father_full_name = models.CharField(max_length=255, verbose_name="ФИО отца", blank=True, null=True)
@@ -108,7 +115,7 @@ class Parent(models.Model):
 
 class InternalExam(models.Model):
     exam_date = models.DateTimeField('Дата экзамена', blank=True)
-    students = models.ManyToManyField('Applicant', verbose_name="Студент")
+    students = models.ManyToManyField('Applicant', verbose_name="Студент", related_name="exam")
 
     class Meta:
         verbose_name = 'Журнал вступительных экзаменов'
@@ -132,7 +139,7 @@ class Interview(models.Model):
 
 class Admission(models.Model):
     applicant = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
-                                     related_name="admission")
+                                     related_name="student")
     department = models.ManyToManyField('Department', verbose_name="Отделение",
                                         blank=True, null=True)
     admission_date = models.DateField(verbose_name="Дата поступления", auto_now=True)
@@ -141,9 +148,13 @@ class Admission(models.Model):
     number_of_3 = models.IntegerField(default=0, verbose_name="Количество троек", blank=True, null=True)
     average_score = models.DecimalField(default=0.0, max_digits=5, decimal_places=2,
                                         verbose_name="Средний балл", blank=True, null=True)
-    exam_result = models.CharField('Результаты экзамена', max_length=255, blank=True)
+    internal_exam = models.DecimalField(default=Decimal(0.0), max_digits=5, decimal_places=2,
+                                        verbose_name="Результаты экзамена", blank=True, null=True)
     application_status = models.CharField(max_length=50, verbose_name="Статус заявки",
-                                          choices=(("watching", "Рассмотрение"), ("accepted", "Принят")),
+                                          choices=(("watching", "Рассмотрение"),
+                                                   ("denied", "Отказано"),
+                                                   ("accepted", "Принят"),
+                                                   ("warn", "Отправлен на заполнение")),
                                           default='watching')
     original_or_copy = models.BooleanField(verbose_name="Оригинал или копия", blank=True, null=True, default=False)
     out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет", blank=True, null=True)
@@ -154,8 +165,6 @@ class Admission(models.Model):
     documents_collected = models.BooleanField(default=False, verbose_name="Документы забраны", blank=True, null=True)
     application_in_gov_services = models.BooleanField(default=False, verbose_name="Заявление в гос. услугах",
                                                       blank=True, null=True)
-    internal_exam = models.OneToOneField(InternalExam, on_delete=models.CASCADE, verbose_name="Внутренний экзамен",
-                                         related_name="admission", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки', blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления', blank=True, null=True)
 
@@ -163,9 +172,47 @@ class Admission(models.Model):
         verbose_name = "Поступление"
         verbose_name_plural = "Поступления"
 
-    def change_status_to_answered(self):
+    def get_departments(self):
+        response = ''
+        if self.department.exists():
+            for department in self.department.all():
+                response += f'{department.name}, '
+        return response
+
+    def change_status_to_accepted(self):
         self.application_status = 'accepted'
         self.save()
+
+    def change_status_to_denied(self):
+        self.application_status = 'denied'
+        self.save()
+
+    def change_status_to_watching(self):
+        self.application_status = 'watching'
+        self.save()
+
+    def change_status_to_warn(self):
+        self.application_status = 'warn'
+        self.save()
+
+    def get_status(self):
+        if self.application_status == 'watching':
+            return 'Рассмотрение'
+        elif self.application_status == 'denied':
+            return 'Ваша заявка отклонена'
+        elif self.application_status == 'accepted':
+            return 'Ваша заявка принята. Вы участвуете в конкурсе'
+        elif self.application_status == 'warn':
+            return 'Ваша заявка под предупреждением. Заполните недостающие данные.'
+        else:
+            return f'{None}'
+
+    def get_fio(self):
+        verbose_name = 'Журнал собеседований'
+        return f'{self.applicant.last_name} {self.applicant.first_name} {self.applicant.patronymic}'
+
+    get_fio.short_description = 'ФИО'
+    get_departments.short_description = 'Выбранные отделения'
 
     def get_original_or_copy(self):
         if self.original_or_copy:

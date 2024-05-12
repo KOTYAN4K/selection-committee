@@ -1,15 +1,21 @@
 {% extends 'account/profile_base.html' %}
 
 {% block content %}
-    <h1>Профиль</h1>
-    <div>
-        <p><img src="{{ user.student.photo.url }}" alt="{{ user.student.photo.name }}" width="200px"></p>
-        <p>ФИО: {{ user.student.last_name }} {{ user.student.first_name }} {{ user.student.patronymic }}</p>
-        <p>Пол: {{ user.student.get_gender }}</p>
-        <p>Дата рождения: {{ user.student.birth_date }}</p>
-        <p>Адрес: {% if user.student.address is not None %}{{ user.student.address }}{% else %}Не указано{% endif %}</p>
-        <p>Школа: {{ user.student.school }}</p>
-        <p>Окончание школы: {{ user.student.graduation_date }}</p>
-        <p>Почта: {{ user.student.email }}</p>
+    <div class="container">
+        <h1 class="profile-header">Профиль</h1>
+        <div class="user-profile">
+            <img src="{{ user.student.photo.url }}" alt="{{ user.student.photo.name }}" width="200px">
+            <div>
+                <p>ФИО: {{ user.student.last_name }} {{ user.student.first_name }} {{ user.student.patronymic }}</p>
+                <p>Пол: {{ user.student.get_gender }}</p>
+                <p>Дата рождения: {{ user.student.birth_date }}</p>
+                <p>Адрес:
+                    {% if user.student.address is not None %}{{ user.student.address }}{% else %}Не
+                        указано{% endif %}</p>
+                <p>Школа: {{ user.student.school }}</p>
+                <p>Окончание школы: {{ user.student.graduation_date }}</p>
+                <p>Почта: {{ user.student.email }}</p>
+            </div>
+        </div>
     </div>
 {% endblock %}

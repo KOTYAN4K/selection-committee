@@ -16,7 +16,7 @@
 
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
-    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
     <title>{% block title %}{% endblock %}</title>
@@ -30,7 +30,7 @@
                     <li><a href="{% url 'home' %}"><img src="{% static 'main/img/logo.svg' %}" alt=""></a></li>
                     <li><a href="{% url 'home' %}">Главная</a></li>
                 </ul>
-                
+
                 <ul class="navigation-menu-list">
                     {% if user.is_authenticated %}
                         {% if user.is_superuser or user.is_staff %}
@@ -53,11 +53,12 @@
             </nav>
         </div>
     </header>
-    <main>
+    <main class="{% block profile_class %}{% endblock %}">
         {% block side-menu %}
         {% endblock %}
-        <div class="mainside container">
+        <div class="mainside">
             {% block content %}
+
             {% endblock %}
         </div>
     </main>
@@ -68,10 +69,9 @@
         </div>
     </footer>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.5/inputmask.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.5/jquery.inputmask.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 <script>
     $(function () {
@@ -82,24 +82,30 @@
     });
 </script>
 <script>
-    $(document).ready(function(){
-        // Применение маски к полю СНИЛС
-        $('[name="SNILS"]').inputmask('999-999-999 99');
+    $(document).ready(function () {
+        // Добавление маски на поля при загрузке страницы
+        $('#id_SNILS').mask('000-000-000 00');
+        $('#id_INN').mask('000-000-000 00');
+        $('#id_passport_number').mask('000-000 000000');
+        $('#id_phone').mask('+7(000)000-00-00');
 
-        // Применение маски к полю ИНН
-        $('[name="INN"]').inputmask('999999999999');
+        // Обработка изменения значения в полях
+        $('#id_SNILS').on('input', function () {
+            $(this).mask('000-000-000 00');
+        });
 
-        // Применение маски к полю номера паспорта
-        $('[name="passport_number"]').inputmask('9999 999999');
+        $('#id_INN').on('input', function () {
+            $(this).mask('000-000-000 00');
+            
+        });
 
-        // Применение маски к полю даты выдачи
-        $('[name="issue_date"]').inputmask('99.99.9999');
+        $('#id_passport_number').on('input', function () {
+            $(this).mask('000-000 000000');
+        });
 
-        // Применение маски к полю свидетельства
-        $('[name="certificate"]').inputmask('aaa 9999 №999999');
-
-        // Применение маски к полю ФИС
-        $('[name="FIS"]').inputmask('999-999-999-999');
+        $('#id_phone').on('input', function () {
+            $(this).mask('+7(000)000-00-00');
+        });
     });
 </script>
 </body>

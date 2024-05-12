@@ -1,7 +1,6 @@
 from captcha.fields import CaptchaField
 from django import forms
 from django.contrib.auth import get_user_model
-from django_select2.forms import ModelSelect2Widget, Select2Widget
 
 from diplom import settings
 from main.models import Applicant, School

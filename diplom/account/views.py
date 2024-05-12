@@ -87,7 +87,8 @@ class RankProfileView(ListView, LoginRequiredMixin):
         departments = []
         admission = Admission.objects.filter(department__name=Department.objects.all()[0],
                                              application_status__contains='accepted',
-                                             average_score__gte=Decimal(average_score)).order_by('average_score')[:25]
+                                             average_score__gte=Decimal(average_score)).order_by('-average_score',
+                                                                                                 '-internal_exam')[:25]
         departments.append(admission)
 
         return departments

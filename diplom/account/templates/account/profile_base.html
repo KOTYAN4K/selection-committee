@@ -2,6 +2,8 @@
 
 {% block title %}Профиль{% endblock %}
 
+{% block profile_class %}profile{% endblock %}
+
 {% block side-menu %}
     <nav class="side-menu">
         <ul>
@@ -9,7 +11,6 @@
             <li><a href="{% url 'account:profile-edit' user.student.id %}">Личная информация</a></li>
             <li><a href="{% url 'account:documents-edit' user.student.id %}">Документы</a></li>
             <li><a href="{% url 'account:parents-edit' user.student.id %}">Родители</a></li>
-            <li><a href="">О вступительном экзамене</a></li>
             <li><a href="{% url 'account:admission-create' user.student.id %}">Заявление на поступление</a></li>
             <li><a href="{% url 'account:rank-profile' %}">Узнать место в рейтинге</a></li>
         </ul>

@@ -26,10 +26,11 @@ urlpatterns = [
     path('', include('main.urls')),
     path('account/', include('account.urls', namespace='account')),
     path('captcha/', include('captcha.urls')),
-    path('__debug__/', include('debug_toolbar.urls')),
+
 ]
 
 if settings.DEBUG:
+    urlpatterns += path('__debug__/', include('debug_toolbar.urls')),
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # handler404 = page_not_found

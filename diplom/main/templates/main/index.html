@@ -5,7 +5,32 @@
 {% block title %}Отделения{% endblock %}
 
 {% block content %}
-    <div class="departments">
-        <a href="{% url 'form' %}">Подать заявку на регистрацию</a>
-    </div>
+    <section class="preview">
+        <div class="container">
+            <h1>Приёмная комиссия Набережночелнинского педагогического колледжа</h1>
+            <p>Подай заявку на регистрацию прямо сейчас и поучаствуй в конкурсе на поступление в бюджетную группу</p>
+            <a class="application-btn" href="{% url 'form' %}">Зарегистрироваться</a>
+        </div>
+    </section>
+
+    <section class="faculties">
+        <div class="container">
+            <h2 hidden="hidden">Факультеты</h2>
+            <h3>Вам доступны 4 направления для образования</h3>
+            <ul class="faculties-list">
+                <li>
+                    <p>Преподавание в начальных классах</p>
+                </li>
+                <li>
+                    <p>Дошкольное образование</p>
+                </li>
+                <li>
+                    <p>Музыкальное образование</p>
+                </li>
+                <li>
+                    <p>Информационные системы и программирование</p>
+                </li>
+            </ul>
+        </div>
+    </section>
 {% endblock %}

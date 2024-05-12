@@ -10,8 +10,8 @@ from main.models import School, Parent, Document, Admission
 def parse_schools():
     # Очистите существующие данные
     School.objects.all().delete()
-
     url = 'https://edu.tatar.ru/n_chelny/type/1'
+
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -51,6 +51,21 @@ def create_account(applicant):
         admission.save()
         return True
     return False
+
+
+def confirm_student(admission):
+    admission.change_status_to_accepted()
+    return True
+
+
+def deny_student(admission):
+    admission.change_status_to_accepted()
+    return True
+
+
+def warn_student(admission):
+    admission.change_status_to_accepted()
+    return True
 
 
 def send_invite_email(email, subject, message):

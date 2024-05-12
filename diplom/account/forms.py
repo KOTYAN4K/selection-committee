@@ -1,5 +1,3 @@
-from _ast import pattern
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
@@ -137,6 +135,4 @@ class AdmissionEditForm(forms.ModelForm):
 
         fields = (
             'department',
-            'received_receipt',
-            'internal_exam_conducted',
         )
