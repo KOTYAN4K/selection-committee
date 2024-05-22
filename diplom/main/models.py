@@ -39,12 +39,10 @@ class Applicant(models.Model):
     email = models.EmailField(verbose_name="Эл.Почта")
     phone = models.CharField(max_length=20, verbose_name='Номер телефона студента', blank=True, null=True)
     address = models.CharField(max_length=255, verbose_name="Адрес проживания")
-    # school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Школа",
-    #                            default=None, blank=True, null=True)
     school = models.CharField(max_length=255, verbose_name="Школа")
     YEAR_CHOICES = [(f'{r}', f'{r}') for r in range(datetime.date.today().year - 3, datetime.date.today().year + 1)]
 
-    graduation_date = models.CharField(max_length=20, choices=YEAR_CHOICES, verbose_name="Дата окончания школы",)
+    graduation_date = models.CharField(max_length=20, choices=YEAR_CHOICES, default=YEAR_CHOICES[0], verbose_name="Дата окончания школы",)
     status = models.CharField(max_length=20, verbose_name="Статус заявки",
                               choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
                               default='watching')
@@ -79,8 +77,8 @@ class Applicant(models.Model):
 class Document(models.Model):
     student = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
                                    related_name='document', blank=True, null=True)
-    SNILS = models.CharField(max_length=14, verbose_name="СНИЛС", blank=True, null=True)
-    INN = models.CharField(max_length=12, verbose_name="ИНН", blank=True, null=True)
+    SNILS = models.CharField(max_length=15, verbose_name="СНИЛС", blank=True, null=True)
+    INN = models.CharField(max_length=15, verbose_name="ИНН", blank=True, null=True)
     passport_number = models.CharField(max_length=20, verbose_name="Номер паспорта", blank=True, null=True)
     issued_by = models.CharField(max_length=255, verbose_name="Кем выдан", blank=True, null=True)
     issue_date = models.DateField(verbose_name="Дата выдачи", blank=True, null=True)

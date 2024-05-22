@@ -21,6 +21,22 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
     <title>{% block title %}{% endblock %}</title>
 </head>
+<style>
+    .ui-autocomplete {
+        max-height: 100px;
+        max-width: 500px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+        height: 100px;
+    }
+</style>
 <body>
 <div class="wrapper">
     <header class="header">
@@ -48,6 +64,7 @@
                         </li>
                     {% else %}
                         <li><a href="{% url 'account:login' %}">Логин</a></li>
+                        <li><a href="{% url 'form' %}">Регистрация</a></li>
                     {% endif %}
                 </ul>
             </nav>
@@ -63,9 +80,46 @@
         </div>
     </main>
 
-    <footer>
+    <footer id="section-sub-footer" class="site-sub-footer clearfix" role="contentinfo">
         <div class="container">
+            <div class="sixteen columns">
 
+                <div class="columns left">
+                    ГАПОУ "Набережночелнинский педагогический колледж"
+                </div><!-- .site-info -->
+
+                <div class="columns right">
+                    &copy; 4K works, 2024
+                    <ul class="social">
+
+
+                        <li>
+                            <a target="_blank" href="http://alpha-edu.pedcollchelny.ru/">
+                                <img height="25" width="25"
+                                     src="https://pedcollchelny.ru/wp-content/uploads/2018/03/alpha-edu.png"
+                                     title="ЦРД &quot;Альфа-поколение&quot;" alt="ЦРД &quot;Альфа-поколение&quot;">
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="http://Vk.com/pedcoll_chelny">
+                                <img height="25" width="25"
+                                     src="https://pedcollchelny.ru/wp-content/uploads/2018/03/VK_Logo.png"
+                                     title="Группа колледжа в соцсети" alt="Группа колледжа в соцсети">
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="http://distant.pedcollchelny.ru/">
+                                <img height="25" width="25"
+                                     src="https://pedcollchelny.ru/wp-content/uploads/2018/03/logo_small.png"
+                                     title="Платформа дистанционного образования"
+                                     alt="Платформа дистанционного образования">
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
         </div>
     </footer>
 </div>
@@ -77,7 +131,8 @@
     $(function () {
         $("#id_school").autocomplete({
             source: '{% url 'autocomplete' %}',
-            minLength: 2
+            minLength: 2,
+            result: 5
         });
     });
 </script>
@@ -96,7 +151,7 @@
 
         $('#id_INN').on('input', function () {
             $(this).mask('000-000-000 00');
-            
+
         });
 
         $('#id_passport_number').on('input', function () {
@@ -104,6 +159,14 @@
         });
 
         $('#id_phone').on('input', function () {
+            $(this).mask('+7(000)000-00-00');
+        });
+        
+        $('#id_mother_phone').on('input', function () {
+            $(this).mask('+7(000)000-00-00');
+        });
+        
+        $('#id_father_phone').on('input', function () {
             $(this).mask('+7(000)000-00-00');
         });
     });

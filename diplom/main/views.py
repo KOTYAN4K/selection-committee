@@ -1,11 +1,11 @@
 import os
 
+from django.db.models import Q
 from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
-
 
 from main.forms import ApplicantShortForm
 from main.models import Department, Applicant, Parent, School
@@ -135,7 +135,9 @@ def update_schools(request):
 
 def autocomplete(request):
     if 'term' in request.GET:
-        qs = School.objects.filter(name__icontains=request.GET.get('term'),)
+        term_request = request.GET.get('term')
+
+        qs = School.objects.filter(name__iregex=term_request)
         title = []
         for school in qs:
             title.append(school.name)

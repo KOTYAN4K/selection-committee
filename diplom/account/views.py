@@ -15,6 +15,11 @@ class LoginUser(LoginView):
     template_name = 'account/authorization.html'
     context_object_name = 'login'
 
+    def get_success_url(self):
+        if self.request.user.is_superuser or self.request.user.is_staff:
+            return reverse_lazy('home')
+        return reverse_lazy('account:profile', args=[self.request.user.id])
+
 
 class UserCreation(CreateView):
     form_class = CustomUserCreationForm
@@ -92,3 +97,7 @@ class RankProfileView(ListView, LoginRequiredMixin):
         departments.append(admission)
 
         return departments
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["departments"] = self.get_queryset()

@@ -7,18 +7,31 @@
             {% csrf_token %}
 
             <div class="form-error">{{ form.non_field_errors }}</div>
+            <div class="form-grid">
+                {% for f in form %}
+                    {% if f.label == 'Согласие на обработку данных' %}
+                        <div>
+                            <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <p class="download-document"><a href="{% url 'download_document' %}">Скачать согласие</a></p>
+                            <div class="form-error">{{ f.errors }}</div>
+                        </div>
+                    {% elif f.label == 'Фото' %}
+                        <div>
+                            <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <div class="form-error">{{ f.errors }}</div>
+                        </div>
+                    {% else %}
+                        <div>
+                            <label hidden="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <div class="form-error">{{ f.errors }}</div>
+                        </div>
 
-            {% for f in form %}
-                {% if f.label == 'Согласие на обработку данных' %}
-                    <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
-                    <p><a href="{% url 'download_document' %}">Скачать согласие</a></p>
-                    <div class="form-error">{{ f.errors }}</div>
-                {% else %}
-                    <label class="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
-                    <div class="form-error">{{ f.errors }}</div>
-                {% endif %}
-            {% endfor %}
-            <button class="button">Сохранить</button>
+                    {% endif %}
+                {% endfor %}
+            <button class="form-control-submit-btn">Сохранить</button>
+            </div>
+
+
 
         </form>
     </div>
