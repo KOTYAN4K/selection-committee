@@ -43,7 +43,6 @@ INSTALLED_APPS = [
 
     'import_export',
     'captcha',
-    'debug_toolbar',
     'bs4',
     'requests'
 ]
