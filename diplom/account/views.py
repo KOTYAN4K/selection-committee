@@ -83,21 +83,40 @@ class AdmissionProfileView(UpdateView, LoginRequiredMixin):
         return Admission.objects.get(applicant=self.request.user.student)
 
 
-class RankProfileView(ListView, LoginRequiredMixin):
+class RankProfileView(LoginRequiredMixin, ListView):
     template_name = 'account/profile_rank.html'
     model = Admission
 
     def get_queryset(self):
         average_score = '4.0'
-        departments = []
-        admission = Admission.objects.filter(department__name=Department.objects.all()[0],
-                                             application_status__contains='accepted',
-                                             average_score__gte=Decimal(average_score)).order_by('-average_score',
-                                                                                                 '-internal_exam')[:25]
-        departments.append(admission)
+        user_departments = self.request.user.student.student.department.values_list('name', flat=True).distinct()
+        user_admissions = Admission.objects.filter(applicant=self.request.user.student)
 
-        return departments
+        department_admissions = []
+        for departments in user_departments:
+            department = Department.objects.get(name=departments)
+            all_admissions = Admission.objects.filter(
+                department=department,
+                application_status__contains='accepted',
+                average_score__gte=Decimal(average_score)
+            ).order_by('-average_score', '-internal_exam')[:25]
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["departments"] = self.get_queryset()
+            top_25_admissions = all_admissions[:25]
+
+            # Добавляем пустые строки до 25
+            while len(top_25_admissions) < 25:
+                top_25_admissions = list(top_25_admissions) + [None]  # Добавляем None для пустых строк
+
+            # Определяем текущий рейтинг пользователя в департаменте
+            user_admission = user_admissions.filter(department=department).first()
+            user_rank = list(all_admissions).index(user_admission) + 1 if user_admission in all_admissions else None
+            is_on_budget = user_rank is not None and user_rank <= 25
+
+            department_admissions.append((department, top_25_admissions, user_rank, is_on_budget))
+
+        return department_admissions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['department_admissions'] = self.get_queryset()
+        return context

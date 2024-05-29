@@ -1,0 +1,70 @@
+<!-- templates/admin/combined_data.html -->
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<h1>Объединенные данные</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Фото</th>
+            <th>Фамилия</th>
+            <th>Имя</th>
+            <th>Отчество</th>
+            <th>Пол</th>
+            <th>Дата рождения</th>
+            <th>Эл.Почта</th>
+            <th>Номер телефона студента</th>
+            <th>Адрес проживания</th>
+            <th>Школа</th>
+            <th>Дата окончания школы</th>
+            <th>Образование</th>
+            <th>Статус заявки</th>
+            <th>Дата поступления</th>
+            <th>Количество пятерок</th>
+            <th>Количество четверок</th>
+            <th>Количество троек</th>
+            <th>Средний балл</th>
+            <th>Результаты экзамена</th>
+            <th>Статус заявки на поступление</th>
+            <th>Оригинал или копия</th>
+            <th>Внебюджет</th>
+            <th>Получил расписку</th>
+            <th>Вступительный экзамен проведен</th>
+            <th>Документы забраны</th>
+            <th>Заявление в гос. услугах</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in combined_data %}
+        <tr>
+            <td><img src="{{ data.photo.url }}" alt="Фото" width="50" height="50"></td>
+            <td>{{ data.last_name }}</td>
+            <td>{{ data.first_name }}</td>
+            <td>{{ data.patronymic }}</td>
+            <td>{{ data.gender }}</td>
+            <td>{{ data.birth_date }}</td>
+            <td>{{ data.email }}</td>
+            <td>{{ data.phone }}</td>
+            <td>{{ data.address }}</td>
+            <td>{{ data.school }}</td>
+            <td>{{ data.graduation_date }}</td>
+            <td>{{ data.education }}</td>
+            <td>{{ data.status }}</td>
+            <td>{{ data.admission_date }}</td>
+            <td>{{ data.number_of_5 }}</td>
+            <td>{{ data.number_of_4 }}</td>
+            <td>{{ data.number_of_3 }}</td>
+            <td>{{ data.average_score }}</td>
+            <td>{{ data.internal_exam }}</td>
+            <td>{{ data.application_status }}</td>
+            <td>{{ data.original_or_copy }}</td>
+            <td>{{ data.out_of_budget }}</td>
+            <td>{{ data.received_receipt }}</td>
+            <td>{{ data.internal_exam_conducted }}</td>
+            <td>{{ data.documents_collected }}</td>
+            <td>{{ data.application_in_gov_services }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

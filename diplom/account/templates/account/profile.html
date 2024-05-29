@@ -5,7 +5,7 @@
         <h1 class="profile-header">Профиль</h1>
         <div class="user-profile">
             <img src="{{ user.student.photo.url }}" alt="{{ user.student.photo.name }}" width="200px">
-            <div>
+            <div class="user-short-info">
                 <p>ФИО: {{ user.student.last_name }} {{ user.student.first_name }} {{ user.student.patronymic }}</p>
                 <p>Пол: {{ user.student.get_gender }}</p>
                 <p>Дата рождения: {{ user.student.birth_date }}</p>
@@ -14,8 +14,15 @@
                         указано{% endif %}</p>
                 <p>Школа: {{ user.student.school }}</p>
                 <p>Окончание школы: {{ user.student.graduation_date }}</p>
+                <p>Образование: {{ user.student.education }}</p>
                 <p>Почта: {{ user.student.email }}</p>
+                <p>
+                    <span class="{{ user.student.student.application_status }}">
+                        Статус заявления: {{ user.student.student.get_status }}</span>
+                </p>
             </div>
+
         </div>
+        <a class="" href="{% url 'generate_document' user.student.id %}">Скачать заявление заранее</a>
     </div>
 {% endblock %}

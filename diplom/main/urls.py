@@ -10,4 +10,5 @@ urlpatterns = [
     path('update-schools/', views.update_schools, name='update-schools'),
     path('autocomplete/', views.autocomplete, name='autocomplete'),
     path('admin/export/', views.export_data, name='export-csv'),
+    path('generate_document/<int:person_id>/', views.generate_document, name='generate_document'),
 ]

@@ -1,15 +1,17 @@
 import os
+import string
 
 from django.db.models import Q
 from django.http import HttpResponse, FileResponse, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
 
+from main.admin import StudentResource
 from main.forms import ApplicantShortForm
 from main.models import Department, Applicant, Parent, School
-from main.utils import parse_schools
+from main.utils import parse_schools, fill_template
 
 
 # Create your views here.
@@ -76,25 +78,25 @@ def download_table(request):
         ws.append([obj.pk,
                    f'{obj.first_name} {obj.last_name} {obj.patronymic}',  # ФИО
                    f'{obj.gender}',  # Пол
-                   f'{obj.applicant.number_of_5}',
-                   f'{obj.applicant.number_of_4}',
-                   f'{obj.applicant.number_of_3}',
+                   f'{obj.student.number_of_5}',
+                   f'{obj.student.number_of_4}',
+                   f'{obj.student.number_of_3}',
                    f'{obj.document.SNILS}',
                    f'{obj.document.INN}',
-                   f'{obj.applicant.average_score}',
-                   f'{obj.applicant.original_or_copy}',
-                   f'{obj.applicant.out_of_budget}',
-                   f'{obj.applicant.documents_collected}',
-                   f'{obj.applicant.received_receipt}',
+                   f'{obj.student.average_score}',
+                   f'{obj.student.original_or_copy}',
+                   f'{obj.student.out_of_budget}',
+                   f'{obj.student.documents_collected}',
+                   f'{obj.student.received_receipt}',
                    f'{obj.school}',
                    f'{obj.graduation_date}',
                    f'{obj.document.FIS}',
                    f'{str(obj.id).zfill(5)}',
-                   f'{obj.applicant.application_in_gov_services}',
+                   f'{obj.student.application_in_gov_services}',
                    f'',
                    f'',
-                   f'{obj.applicant.application_status}',
-                   f'{obj.applicant.internal_exam}',
+                   f'{obj.student.application_status}',
+                   f'{obj.student.internal_exam}',
                    f'{obj.birth_date}',
                    f'{obj.phone}',
                    f'{obj.parents.mother_full_name}',
@@ -133,9 +135,26 @@ def update_schools(request):
     return redirect('home')
 
 
+def generate_document(request, person_id):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    person = get_object_or_404(Applicant, id=person_id)
+    template_path = BASE_DIR + '\\static\\documents\\' + 'ZayavlenieAbiturienta.docx'
+    filled_doc = fill_template(person.id, template_path)
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = f'attachment; filename="document.docx"'
+    filled_doc.save(response)
+
+    return response
+
+
+def normalize(text):
+    return ''.join(char for char in text if char not in string.punctuation).lower()
+
+
 def autocomplete(request):
     if 'term' in request.GET:
-        term_request = request.GET.get('term')
+        term_request = normalize(request.GET.get('term'))
 
         qs = School.objects.filter(name__iregex=term_request)
         title = []
@@ -239,5 +258,12 @@ def export_data(request):
         return response
 
 
-def page_not_found(request):
+def export_students(request):
+    dataset = StudentResource().export()
+    response = HttpResponse(dataset.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="students.xlsx"'
+    return response
+
+
+def page_not_found(request, exception):
     return HttpResponse("404 NOT FOUND")

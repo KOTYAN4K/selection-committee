@@ -1,10 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
+from django.shortcuts import get_object_or_404
+from docx import Document as docs
 from django.core.mail import send_mail
 
 from account.models import User
 from diplom.settings import EMAIL_HOST_USER
-from main.models import School, Parent, Document, Admission
+from main.models import School, Parent, Document, Admission, Applicant, ApplicantAdmissionView
 
 urls = [
     'https://edu.tatar.ru/agryz/type/1',
@@ -74,8 +76,13 @@ def parse_info(url):
 def create_account(applicant):
     if not User.objects.filter(email=applicant.email).exists():
         new_user = User()
-        new_user.username = applicant.first_name + applicant.last_name + str(applicant.pk)
-        new_user.set_password(applicant.patronymic)
+        new_user.username = (str(applicant.pk).zfill(2) +
+                             str(applicant.birth_date.year) +
+                             str(applicant.birth_date.month).zfill(2) +
+                             str(applicant.birth_date.day).zfill(2))
+        password = User.objects.make_random_password()
+        new_user.set_password(password)
+
         new_user.email = applicant.email
         new_user.student = applicant
         new_user.save()
@@ -86,7 +93,7 @@ def create_account(applicant):
             f"""Ваша заявка принята, приступайте к заполнению вашей личной страницы с документами.
 Вот ваши данные для авторизации на сайте:
 Логин:{new_user.username}
-Пароль:{applicant.patronymic}
+Пароль:{password}
 
 Можно также использовать почту для авторизации.""",
             EMAIL_HOST_USER,
@@ -99,6 +106,8 @@ def create_account(applicant):
         parents.save()
         documents.save()
         admission.save()
+        ApplicantAdmissionView.objects.create(applicant=applicant, admission=admission,
+                                              document=documents, parent=parents).save()
         return True
     return False
 
@@ -126,3 +135,49 @@ def send_invite_email(email, subject, message):
         [email],
         fail_silently=False,
     )
+
+
+def replace_text_in_runs(paragraph, replacements):
+    for key, value in replacements.items():
+        if key in paragraph.text:
+            full_text = ''.join([run.text for run in paragraph.runs])
+            new_text = full_text.replace(key, value)
+
+            for i in range(len(paragraph.runs)):
+                paragraph.runs[i].text = ''
+
+            paragraph.runs[0].text = new_text
+
+
+def fill_template(person_id, template_path):
+    person = get_object_or_404(Applicant, id=person_id)
+    doc = docs(template_path)
+
+    replacements = {
+        '{last_name}': f'{person.first_name}',
+        '{first_name}': person.last_name,
+        '{patronymic}': person.patronymic,
+        '{birth_date}': person.birth_date.strftime('%d.%m.%Y'),
+        '{passport}': f'Серия  {person.document.get_passport_series()}   № {person.document.get_passport_num()}',
+        '{issued_by}': person.document.issued_by,
+        '{issue_date}': person.document.issue_date.strftime('%d.%m.%Y'),
+        '{phone}': person.phone,
+        '{snils}': person.document.SNILS,
+        '{addmissions}': person.student.get_departments(),
+    }
+
+    for paragraph in doc.paragraphs:
+        replace_text_in_runs(paragraph, replacements)
+
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    for key, value in replacements.items():
+                        if key in paragraph.text:
+                            for run in paragraph.runs:
+                                if key in run.text:
+                                    run.text = run.text.replace(key, value)
+
+    return doc

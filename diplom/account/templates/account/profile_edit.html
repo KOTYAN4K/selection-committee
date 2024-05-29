@@ -15,6 +15,7 @@
                             <p class="download-document"><a href="{% url 'download_document' %}">Скачать согласие</a></p>
                             <div class="form-error">{{ f.errors }}</div>
                         </div>
+
                     {% elif f.label == 'Фото' %}
                         <div>
                             <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
@@ -22,7 +23,7 @@
                         </div>
                     {% else %}
                         <div>
-                            <label hidden="hidden" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
                             <div class="form-error">{{ f.errors }}</div>
                         </div>
 
@@ -30,9 +31,6 @@
                 {% endfor %}
             <button class="form-control-submit-btn">Сохранить</button>
             </div>
-
-
-
         </form>
     </div>
 {% endblock %}

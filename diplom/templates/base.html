@@ -131,7 +131,7 @@
     $(function () {
         $("#id_school").autocomplete({
             source: '{% url 'autocomplete' %}',
-            minLength: 2,
+            minLength: 1,
             result: 5
         });
     });

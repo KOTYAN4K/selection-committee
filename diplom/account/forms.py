@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 
 from account.models import User
-from main.models import Applicant, Parent, Document, Admission
+from main.models import Applicant, Parent, Document, Admission, Interview, InternalExam
 
 
 class LoginUserForm(AuthenticationForm):
@@ -63,6 +63,7 @@ class ProfileUserForm(forms.ModelForm):
             'patronymic',
             'email',
             'phone',
+            'education',
             'address',
             'consent'
         )
@@ -83,6 +84,7 @@ class ProfileUserForm(forms.ModelForm):
                 'accept': ".doc,.docx,.xml,application/msword,"
                           "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             }),
+            'education': forms.Select(attrs={'class': 'input-control'}),
         }
 
 
@@ -116,16 +118,16 @@ class DocumentEditForm(forms.ModelForm):
         widgets = {
             'SNILS': forms.TextInput(attrs={'class': 'input-control',
                                             'placeholder': 'Снилс',
-                                            # 'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
+                                            'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
                                             'data-mask': '999-999-999 99'}),
             'INN': forms.TextInput(attrs={'class': 'input-control',
                                           'placeholder': 'ИНН',
-                                          # 'pattern': '\d{12}',
-                                          'data-mask': '999999999999'}),
+                                          'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
+                                          'data-mask': '999--999-999 99'}),
             'passport_number': forms.TextInput(attrs={'class': 'input-control',
                                                       'placeholder': 'Номер паспорта',
-                                                      # 'pattern': '\d{4} \d{6}',
-                                                      'data-mask': '9999 999999'}),
+                                                      'pattern': '\d{3}-\d{3} \d{6}',
+                                                      'data-mask': '999-999 999999'}),
             'issue_date': forms.DateInput(attrs={'class': 'input-control', 'type': 'date'}),
             'issued_by': forms.Textarea(attrs={'class': 'input-control',
                                                # 'pattern': '[\w\s,]+',
@@ -144,3 +146,27 @@ class AdmissionEditForm(forms.ModelForm):
         widgets={
             'department': forms.CheckboxSelectMultiple(attrs={'class': '    '}),
         }
+
+
+class InterviewAdminForm(forms.ModelForm):
+    class Meta:
+        model = Interview
+        fields = ['students', 'interview_date']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['students'].queryset = Applicant.objects.exclude(
+            id__in=Interview.objects.values_list('students', flat=True)
+        )
+
+
+class InternalExamAdminForm(forms.ModelForm):
+    class Meta:
+        model = InternalExam
+        fields = ['students', 'exam_date']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['students'].queryset = Applicant.objects.exclude(
+            id__in=InternalExam.objects.values_list('students', flat=True)
+        )

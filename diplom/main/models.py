@@ -42,7 +42,19 @@ class Applicant(models.Model):
     school = models.CharField(max_length=255, verbose_name="Школа")
     YEAR_CHOICES = [(f'{r}', f'{r}') for r in range(datetime.date.today().year - 3, datetime.date.today().year + 1)]
 
-    graduation_date = models.CharField(max_length=20, choices=YEAR_CHOICES, default=YEAR_CHOICES[0], verbose_name="Дата окончания школы",)
+    graduation_date = models.CharField(max_length=20, choices=YEAR_CHOICES, default=YEAR_CHOICES[0],
+                                       verbose_name="Дата окончания школы", )
+    education = models.CharField(max_length=100, verbose_name="Образование",
+                                 choices=(("Основное общее", "Основное общее"),
+                                          ("Среднее(полное) общее образование", "Среднее(полное) общее образование"),
+                                          ("Начальное профессиональное образование", "Начальное профессиональное "
+                                                                                     "образование"),
+                                          ("Среднее профессиональное образование", "Среднее профессиональное "
+                                                                                   "образование"),
+                                          ("Высшее профессиональное образование", "Высшее профессиональное "
+                                                                                  "образование")),
+                                 default='Среднее(полное) общее образование'
+                                 )
     status = models.CharField(max_length=20, verbose_name="Статус заявки",
                               choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
                               default='watching')
@@ -70,6 +82,10 @@ class Applicant(models.Model):
         else:
             return 'Женский'
 
+    @classmethod
+    def get_students_without_interview(cls):
+        return cls.objects.exclude(id__in=Interview.objects.values_list('students__id', flat=True))
+
     def __str__(self):
         return f"{self.id} {self.last_name} {self.first_name} {self.patronymic} - {self.birth_date}"
 
@@ -93,6 +109,14 @@ class Document(models.Model):
         if self.student is None:
             return "NULL"
         return f'{self.student}'
+
+    def get_passport_series(self):
+        passport = self.passport_number.split()
+        return f'{passport[0]}'
+
+    def get_passport_num(self):
+        passport = self.passport_number.split()
+        return f'{passport[1]}'
 
 
 class Parent(models.Model):
@@ -135,11 +159,18 @@ class Interview(models.Model):
         return f'Собеседование от {self.interview_date.date()}'
 
 
+def mask_name(name):
+    if len(name) > 1:
+        return name[0] + '*' * (len(name) - 1)
+    else:
+        return '*'
+
+
 class Admission(models.Model):
-    applicant = models.OneToOneField('Applicant', on_delete=models.CASCADE, verbose_name="Абитуриент",
+    applicant = models.OneToOneField(Applicant, on_delete=models.CASCADE, verbose_name="Абитуриент",
                                      related_name="student")
     department = models.ManyToManyField('Department', verbose_name="Отделение",
-                                        blank=True, null=True)
+                                        blank=True)
     admission_date = models.DateField(verbose_name="Дата поступления", auto_now=True)
     number_of_5 = models.IntegerField(default=0, verbose_name="Количество пятерок", blank=True, null=True)
     number_of_4 = models.IntegerField(default=0, verbose_name="Количество четверок", blank=True, null=True)
@@ -158,7 +189,7 @@ class Admission(models.Model):
     out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет", blank=True, null=True)
 
     received_receipt = models.BooleanField(default=False, verbose_name="Получил расписку", blank=True, null=True)
-    internal_exam_conducted = models.BooleanField(default=False, verbose_name="Внутренний экзамен проведен",
+    internal_exam_conducted = models.BooleanField(default=False, verbose_name="Вступительный экзамен проведен",
                                                   blank=True, null=True)
     documents_collected = models.BooleanField(default=False, verbose_name="Документы забраны", blank=True, null=True)
     application_in_gov_services = models.BooleanField(default=False, verbose_name="Заявление в гос. услугах",
@@ -174,7 +205,8 @@ class Admission(models.Model):
         response = ''
         if self.department.exists():
             for department in self.department.all():
-                response += f'{department.name}, '
+                response += f'{department.name}  '
+        response.replace(',', '.')
         return response
 
     def change_status_to_accepted(self):
@@ -206,8 +238,10 @@ class Admission(models.Model):
             return f'{None}'
 
     def get_fio(self):
-        verbose_name = 'Журнал собеседований'
         return f'{self.applicant.last_name} {self.applicant.first_name} {self.applicant.patronymic}'
+
+    def get_secret_fio(self):
+        return f'{mask_name(self.applicant.last_name)} {mask_name(self.applicant.first_name)} {mask_name(self.applicant.patronymic)}'
 
     get_fio.short_description = 'ФИО'
     get_departments.short_description = 'Выбранные отделения'
@@ -225,7 +259,41 @@ class Admission(models.Model):
         if total_subjects != 0:
             self.average_score = total_scores / total_subjects
 
+        if self.internal_exam != Decimal(0.0):
+            self.internal_exam_conducted = True
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.applicant}'
+
+
+class ApplicantAdmissionView(models.Model):
+    applicant = models.OneToOneField(
+        Applicant,
+        on_delete=models.CASCADE,
+        verbose_name="Абитуриент",
+        related_name="admission_view_applicant"
+    )
+    admission = models.OneToOneField(
+        Admission,
+        on_delete=models.CASCADE,
+        verbose_name="Поступление",
+        related_name="admission_view_admission"
+    )
+    document = models.OneToOneField(
+        Document,
+        on_delete=models.CASCADE,
+        verbose_name="Документ",
+        related_name="admission_view_document"
+    )
+    parent = models.OneToOneField(
+        Parent,
+        on_delete=models.CASCADE,
+        verbose_name="Родитель",
+        related_name="admission_view_parent"
+    )
+
+    class Meta:
+        verbose_name = "Общая таблица"
+        verbose_name_plural = "Общая таблица"

@@ -19,20 +19,20 @@ from django.urls import path, include
 from django.conf.urls.static import static
 
 from diplom import settings
-from main.views import page_not_found
+from main.views import page_not_found, export_students
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('account/', include('account.urls', namespace='account')),
     path('captcha/', include('captcha.urls')),
-
+    path('admin/export_students/', export_students, name='export_students'),
 ]
 
 if settings.DEBUG:
     urlpatterns += path('__debug__/', include('debug_toolbar.urls')),
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# handler404 = page_not_found
+handler404 = page_not_found
 
 admin.site.site_header = "Панель администрирования"

@@ -2,42 +2,79 @@
 
 {% block title %}Рейтинг{% endblock %}
 
+{% load custom_tags %}
+
 {% block content %}
     <div class="container">
         <h1 class="profile-header">Рейтинг</h1>
         <div>
-            {% for object in object_list %}
+            {% if department_admissions %}
+                {% for department, admissions, user_rank, is_on_budget in department_admissions %}
 
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Имя</th>
-                        <th>Фамилия</th>
-                        <th>Отчество</th>
-                        <th>Пол</th>
-                        <th>Средний бал</th>
-                        <th>Результат вступительного экзамена</th>
-                        <th>Оригинал/копия</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for foo in object %}
-
-                        <tr {% if foo.applicant == user.student %} class="current-user" {% endif %}>
-                            <td>{{ foo.applicant.first_name }}</td>
-                            <td>{{ foo.applicant.last_name }}</td>
-                            <td>{{ foo.applicant.patronymic }}</td>
-                            <td>{{ foo.applicant.get_gender }}</td>
-                            <td>{{ foo.average_score }}</td>
-                            <td>{{ foo.internal_exam }}</td>
-                            <td>{{ foo.get_original_or_copy }}</td>
+                    <table class="table">
+                        <caption class="table-caption">{{ department }}</caption>
+                        <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>ФИО</th>
+                            <th>Пол</th>
+                            <th nowrap>Дата рождения</th>
+                            <th nowrap>Ср. бал</th>
+                            {% if department.name != "Информационные системы и программирование" %}
+                                <th nowrap>Вст. экз.</th>
+                            {% endif %}
+                            <th nowrap>Оригинал/копия</th>
                         </tr>
+                        </thead>
+                        <tbody>
+                        {% for admission in admissions %}
+                            {% if admission %}
+                                <tr {% if admission.applicant == user.student %} class="current-user" {% endif %}>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="empty-cell" nowrap>
+                                        {% if admission.applicant == user.student %}
+                                            {{ admission.get_fio }}
+                                        {% else %}
+                                            {{ admission.get_secret_fio }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ admission.applicant.get_gender }}</td>
+                                    <td nowrap>{{ admission.applicant.birth_date }}</td>
+                                    <td>{{ admission.average_score }}</td>
+                                    {% if department.name != "Информационные системы и программирование" %}
+                                        <td>{{ admission.internal_exam }}</td>
+                                    {% endif %}
+                                    <td>{{ admission.get_original_or_copy }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td class="empty-cell">[пока не занято]</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    {% if department.name != "Информационные системы и программирование" %}
+                                        <td></td>
+                                    {% endif %}
+                                    <td></td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
 
                         </tbody>
-                    {% endfor %}
-                </table>
-
-            {% endfor %}
+                    </table>
+                    <p>
+                        {% if is_on_budget %}
+                            Вы попали на бюджет!
+                        {% else %}
+                            Ваш текущий рейтинг: {{ user_rank|default:0 }}. Вы не попали в топ-25, но ваш рейтинг среди всех
+                            студентов {{ user_rank|default:0 }}.
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>Вы ещё не заполнили данные.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
