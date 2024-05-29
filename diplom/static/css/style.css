@@ -16,8 +16,10 @@
 .container {
     width: 1280px;
     margin: 0 auto;
+    overflow: scroll;
 }
-.profile .container{
+
+.profile .container {
     width: 920px;
 }
 
@@ -29,6 +31,7 @@
 
 .navigation-menu {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     min-height: 40px;
@@ -85,7 +88,7 @@
 .preview .container {
     color: var(--secondary-text-color);
     width: 550px;
-    height: 250px;
+    height: 290px;
     position: absolute;
     right: 10vw;
     top: 70px;
@@ -155,6 +158,12 @@
     margin-bottom: 1.25rem;
     border-collapse: separate;
     border-spacing: 0;
+    width: 100%;
+    overflow: scroll;
+}
+
+.overflow {
+    overflow: scroll;
 }
 
 .entry-content table tr:nth-of-type(odd) {
@@ -294,7 +303,7 @@ input[type="checkbox"] {
     transition: all 0.2s;
 }
 
-textarea.input-control{
+textarea.input-control {
     resize: none;
     height: 85px;
 }
@@ -307,7 +316,7 @@ textarea.input-control{
     padding: 35px 0;
 }
 
-.form-page.login .mainside{
+.form-page.login .mainside {
     padding: 114px 0;
 }
 
@@ -324,6 +333,7 @@ textarea.input-control{
     background: white;
     width: 80%;
     padding: 35px;
+    overflow: scroll;
 }
 
 .side-menu {
@@ -354,7 +364,7 @@ textarea.input-control{
 
 }
 
-.user-profile img{
+.user-profile img {
     float: left;
     margin-right: 20px;
 }
@@ -401,25 +411,25 @@ textarea.input-control{
     padding: 10px;
 }
 
-.table-caption{
+.table-caption {
     font-weight: bold;
     font-size: 24px;
     margin: 20px auto;
 }
 
-.watching{
+.watching {
     color: #4ac1f7;
 }
 
-.denied{
+.denied {
     color: #ba2121;
 }
 
-.accepted{
+.accepted {
     color: #94b24d;
 }
 
-.warn{
+.warn {
     color: #f5dd5d;
 }
 
@@ -427,7 +437,7 @@ textarea.input-control{
     background: var(--third-color);
 }
 
-.empty-cell{
+.empty-cell {
     text-align: left !important;
     width: 100%;
 }
@@ -437,11 +447,11 @@ textarea.input-control{
     margin: 0 auto;
 }
 
-.download-document{
+.download-document {
     margin-top: 10px;
 }
 
-.form-grid{
+.form-grid {
     margin-top: 25px;
     display: flex;
     flex-direction: column;
@@ -508,6 +518,60 @@ footer {
 }
 
 
-/*@media (width: 1366px) {*/
-/*    */
-/*}*/
+/* Медиа */
+
+/* Большие экраны (от 1024px до 1440px) */
+@media only screen and (min-width: 1024px) and (max-width: 1440px) {
+    .container {
+        width: 1280px;
+    }
+}
+
+/* Настольные компьютеры */
+@media only screen and (min-width: 1024px) {
+    .container {
+        width: 1000px;
+    }
+}
+
+/* Планшеты и небольшие ноутбуки (пейзажная ориентация) */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        width: 600px;
+    }
+}
+
+/* Мобильные устройства (портретная ориентация) */
+@media only screen and (max-width: 768px) {
+    .container {
+        width: 300px;
+    }
+
+    .preview {
+        position: relative;
+        background: url("../img/peakpx.jpg") center center no-repeat;
+        background-size: cover;
+        padding: 35px 0;
+        min-height: 520px;
+    }
+
+    .preview .container h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .preview .container {
+        color: var(--secondary-text-color);
+        width: 250px;
+        height: 350px;
+        position: absolute;
+        top: 70px;
+        background: white;
+        border-radius: 5px;
+        padding: 25px;
+    }
+    .registration_application{
+        width: 350px;
+    }
+
+}
