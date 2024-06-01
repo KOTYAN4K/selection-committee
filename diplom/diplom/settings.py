@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-3-&e9*by)dp1ejycs21jz10o-9e4ywdzzt-k7zg#zluw!r#0#w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['timyr4rm.beget.tech']
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -83,8 +83,12 @@ WSGI_APPLICATION = 'diplom.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'azamathg_azamath',
+        'USER': 'azamathg_azamath',
+        'PASSWORD': 'd&KvOBD4',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
     }
 }
 
@@ -121,10 +125,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = '/home/a/azamathg/azamathg.beget.tech/public_html/static'
 
-# STATIC_ROOT = BASE_DIR / 'static'
-
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
