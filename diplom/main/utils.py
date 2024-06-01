@@ -73,6 +73,10 @@ def parse_info(url):
             School.objects.create(name=name).save()
 
 
+def make_docunment(student):
+    ...
+
+
 def create_account(applicant):
     if not User.objects.filter(email=applicant.email).exists():
         new_user = User()

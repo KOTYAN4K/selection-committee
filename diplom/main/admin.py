@@ -5,7 +5,7 @@ from import_export.widgets import ForeignKeyWidget
 
 from account.forms import InterviewAdminForm, InternalExamAdminForm
 from .resources import ApplicantAdmissionViewResource
-from .utils import create_account, send_invite_email, confirm_student, deny_student, warn_student
+from .utils import create_account, send_invite_email, confirm_student, deny_student, warn_student, make_docunment
 from .models import *
 
 
@@ -142,6 +142,18 @@ class StudentAdmin(ExportMixin, admin.ModelAdmin):
         queryset = super().get_export_queryset(request)
         return queryset
 
+    @admin.action(description='Скачать заявление студента')
+    def download_acception(self, request, queryset):
+        count = 0
+        for obj in queryset:
+            response = make_docunment(obj)
+
+            if response:
+                count += 1
+
+        self.message_user(request, f'Успешно приняты {count} студенты')
+
+
     @admin.action(description='Принять студента')
     def confirm_applicant(self, request, queryset):
         count = 0
@@ -191,7 +203,7 @@ class InterviewAdmin(admin.ModelAdmin):
             interview_date = interview.interview_date
             subject = "Приглашение на собеседование."
             message = f"""Добрый день, мы одобряем вашу заявку и приглашаем пройти собеседование.
-Вам необходимо явиться {interview_date.day.zfill(2)} {interview_date.month.zfill(2)} в {interview_date.hour.zfill(2)}:{str(interview_date.minute).zfill(2)} для прохождения экзамена. Явка обязательна."""
+Вам необходимо явиться {str(interview_date.day).zfill(2)}.{str(interview_date.month).zfill(2)}.{str(interview_date.year).zfill(2)} в {str(interview_date.hour).zfill(2)}:{str(interview_date.minute).zfill(2)} для прохождения экзамена. Явка обязательна."""
 
             for student in interview.students.all():
                 send_invite_email(student.email, subject, message)
@@ -210,7 +222,7 @@ class InternalExamAdmin(admin.ModelAdmin):
             exam_date = internal_exam.exam_date
             subject = "Приглашение на собеседование."
             message = f"""Добрый день, мы одобряем вашу заявку и приглашаем пройти вступительный экзамен.
-Вам необходимо явиться {exam_date.date().zfill(4)} в {exam_date.hour.zfill(2)}:{exam_date.minute.zfill(2)} для прохождения экзамена. Явка обязательна."""
+Вам необходимо явиться {str(exam_date.day).zfill(2)}.{str(exam_date.month).zfill(2)}.{str(exam_date.year).zfill(2)} в {str(exam_date.hour).zfill(2)}:{str(exam_date.minute).zfill(2)} для прохождения экзамена. Явка обязательна."""
             for student in internal_exam.students.all():
                 send_invite_email(student.email, subject, message)
         self.message_user(request, f'Сообщения успешно отправлены.')
