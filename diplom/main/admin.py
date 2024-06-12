@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 from import_export import resources, fields
 from import_export.admin import ExportMixin, ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
@@ -22,13 +24,57 @@ class DocumentInline(admin.StackedInline):  # или TabularInline, в зави�
 class ParentsInline(admin.StackedInline):  # или TabularInline, в зависимости от предпочтений дизайна
     model = Parent
     can_delete = False  # если вы не хотите удалять документы из приемов
-    verbose_name_plural = 'Абитуриенты'
+    verbose_name_plural = 'Родители'
 
 
 class ApplicantInline(admin.StackedInline):  # или TabularInline, в зависимости от предпочтений дизайна
     model = Applicant
     can_delete = False  # если вы не хотите удалять документы из приемов
     verbose_name_plural = 'Абитуриенты'
+
+
+class AdmissionInline(admin.StackedInline):
+    model = Admission
+    can_delete = False
+    verbose_name_plural = 'Поступления'
+    fk_name = 'applicant'
+
+
+class ParentInline(admin.StackedInline):
+    model = Parent
+    can_delete = False
+    verbose_name_plural = 'Родители'
+
+
+class StudentResource(resources.ModelResource):
+    fio = fields.Field(
+        column_name='ФИО',
+        attribute='get_fio',
+    )
+    departments = fields.Field(
+        column_name='Отделения',
+        attribute='get_departments',
+    )
+
+    class Meta:
+        model = Admission
+        fields = ('id',
+                  'fio',
+                  'departments',
+                  'admission_date',
+                  'number_of_5',
+                  'number_of_4',
+                  'number_of_3',
+                  'average_score',
+                  'internal_exam',
+                  'original_or_copy',
+                  'application_status',
+                  'internal_exam_conducted',
+                  'received_receipt',
+                  'out_of_budget',
+                  'documents_collected',
+                  'application_in_gov_services',
+                  )
 
 
 @admin.register(Applicant)
@@ -69,39 +115,18 @@ class ApplicantAdmin(admin.ModelAdmin):
         self.message_user(request, f'Успешно приняты {count} пользователей')
 
 
-class StudentResource(resources.ModelResource):
-    fio = fields.Field(
-        column_name='ФИО',
-        attribute='get_fio',
-    )
-    departments = fields.Field(
-        column_name='Отделения',
-        attribute='get_departments',
-    )
-
-    class Meta:
-        model = Admission
-        fields = ('id',
-                  'fio',
-                  'departments',
-                  'admission_date',
-                  'number_of_5',
-                  'number_of_4',
-                  'number_of_3',
-                  'average_score',
-                  'internal_exam',
-                  'original_or_copy',
-                  'application_status',
-                  'internal_exam_conducted',
-                  'received_receipt',
-                  'out_of_budget',
-                  'documents_collected',
-                  'application_in_gov_services',
-                  )
-
-
 class StudentAdmin(ExportMixin, admin.ModelAdmin):
     resource_class = StudentResource
+
+    def download_application(self, obj):
+        return format_html(
+            '<a class="button" style="margin-top: 15px" href="{}">Скачать заявление</a>',
+            reverse('generate_document', args=[obj.applicant.pk])
+        )
+
+    download_application.short_description = 'Скачать заявление'
+    download_application.allow_tags = True
+
     list_display = ('id',
                     'get_fio',
                     'get_departments',
@@ -117,7 +142,8 @@ class StudentAdmin(ExportMixin, admin.ModelAdmin):
                     'received_receipt',
                     'out_of_budget',
                     'documents_collected',
-                    'application_in_gov_services',)
+                    'application_in_gov_services',
+                    'download_application')
     list_editable = (
         'number_of_5',
         'number_of_4',
@@ -188,9 +214,6 @@ class StudentAdmin(ExportMixin, admin.ModelAdmin):
         self.message_user(request, f'Успешно предупреждены {count} студенты')
 
 
-admin.site.register(Admission, StudentAdmin)
-
-
 @admin.register(Interview)
 class InterviewAdmin(admin.ModelAdmin):
     form = InterviewAdminForm
@@ -228,19 +251,6 @@ class InternalExamAdmin(admin.ModelAdmin):
         self.message_user(request, f'Сообщения успешно отправлены.')
 
 
-class AdmissionInline(admin.StackedInline):
-    model = Admission
-    can_delete = False
-    verbose_name_plural = 'Поступления'
-    fk_name = 'applicant'
-
-
-class ParentInline(admin.StackedInline):
-    model = Parent
-    can_delete = False
-    verbose_name_plural = 'Родители'
-
-
 class ApplicantAdmissionViewAdmin(ImportExportModelAdmin):
     resource_class = ApplicantAdmissionViewResource
 
@@ -273,8 +283,7 @@ class ApplicantAdmissionViewAdmin(ImportExportModelAdmin):
         'get_admission_out_of_budget', 'get_admission_received_receipt',
         'get_admission_internal_exam_conducted', 'get_admission_documents_collected',
         'get_admission_application_in_gov_services', 'get_document_inn', 'get_document_passport_number',
-        'get_document_issued_by', 'get_document_issue_date', 'get_document_certificate',
-        'get_document_fis', 'get_parent_mother_full_name', 'get_parent_mother_phone',
+        'get_document_issued_by', 'get_document_issue_date', 'get_parent_mother_full_name', 'get_parent_mother_phone',
         'get_parent_father_full_name', 'get_parent_father_phone'
     )
 
@@ -433,16 +442,6 @@ class ApplicantAdmissionViewAdmin(ImportExportModelAdmin):
 
     get_document_issue_date.short_description = 'Дата выдачи'
 
-    def get_document_certificate(self, obj):
-        return obj.document.certificate
-
-    get_document_certificate.short_description = 'Свидетельство'
-
-    def get_document_fis(self, obj):
-        return obj.document.FIS
-
-    get_document_fis.short_description = 'ФИС'
-
     def get_parent_mother_full_name(self, obj):
         return obj.parent.mother_full_name
 
@@ -465,10 +464,9 @@ class ApplicantAdmissionViewAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(ApplicantAdmissionView, ApplicantAdmissionViewAdmin)
-
-
-admin.site.register(Document)
-admin.site.register(Parent)
+admin.site.register(Admission, StudentAdmin)
 admin.site.register(Department)
+# admin.site.register(School)
 
 admin.site.sort_by = 'order'
+

@@ -49,9 +49,11 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class ProfileUserForm(forms.ModelForm):
-    last_name = forms.CharField(disabled=True, label='Фамилия', widget=forms.TextInput(attrs={'class': 'input-control'}))
+    last_name = forms.CharField(disabled=True, label='Фамилия',
+                                widget=forms.TextInput(attrs={'class': 'input-control'}))
     first_name = forms.CharField(disabled=True, label='Имя', widget=forms.TextInput(attrs={'class': 'input-control'}))
-    patronymic = forms.CharField(disabled=True, label='Отчество', widget=forms.TextInput(attrs={'class': 'input-control'}))
+    patronymic = forms.CharField(disabled=True, label='Отчество',
+                                 widget=forms.TextInput(attrs={'class': 'input-control'}))
     email = forms.CharField(disabled=True, label='Эл.Почта', widget=forms.TextInput(attrs={'class': 'input-control'}))
 
     class Meta:
@@ -72,19 +74,24 @@ class ProfileUserForm(forms.ModelForm):
                 'class': 'input-control',
                 'type': "file",
                 'id': "input__file",
-                'accept': "image/*"
+                'accept': "image/*",
+                'required': True
             }),
             'gender': forms.Select(attrs={'disabled': 'disabled'}),
-            'address': forms.Textarea(attrs={'class': 'input-control', 'placeholder': 'Адрес'}),
-            'phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон'}),
+            'address': forms.Textarea(attrs={'class': 'input-control', 'placeholder': 'Адрес',
+                                             'required': True}),
+            'phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон',
+                                            'required': True}),
             'consent': forms.FileInput(attrs={
                 'class': 'input-control',
                 'type': "file",
                 'id': "input__file",
                 'accept': ".doc,.docx,.xml,application/msword,"
-                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                'required': True
             }),
-            'education': forms.Select(attrs={'class': 'input-control'}),
+            'education': forms.Select(attrs={'class': 'input-control',
+                                             'required': True}),
         }
 
 
@@ -98,10 +105,14 @@ class ParentsEditForm(forms.ModelForm):
                   'father_phone')
 
         widgets = {
-            'mother_full_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'ФИО Мамы'}),
-            'mother_phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон Мамы'}),
-            'father_full_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'ФИО Папы'}),
-            'father_phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон Папы'}),
+            'mother_full_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'ФИО Мамы',
+                                                       'required': True, 'pattern': '^[А-Яа-яЁё]+$'}),
+            'mother_phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон Мамы',
+                                                   'required': True}),
+            'father_full_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'ФИО Папы',
+                                                       'required': True, 'pattern': '^[А-Яа-яЁё]+$'}),
+            'father_phone': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Телефон Папы',
+                                                   'required': True}),
         }
 
 
@@ -119,19 +130,24 @@ class DocumentEditForm(forms.ModelForm):
             'SNILS': forms.TextInput(attrs={'class': 'input-control',
                                             'placeholder': 'Снилс',
                                             'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
-                                            'data-mask': '999-999-999 99'}),
+                                            'data-mask': '999-999-999 99',
+                                            'required': True}),
             'INN': forms.TextInput(attrs={'class': 'input-control',
                                           'placeholder': 'ИНН',
                                           'pattern': '\d{3}-\d{3}-\d{3} \d{2}',
-                                          'data-mask': '999--999-999 99'}),
+                                          'data-mask': '999--999-999 99',
+                                          'required': True}),
             'passport_number': forms.TextInput(attrs={'class': 'input-control',
                                                       'placeholder': 'Номер паспорта',
                                                       'pattern': '\d{3}-\d{3} \d{6}',
-                                                      'data-mask': '999-999 999999'}),
-            'issue_date': forms.DateInput(attrs={'class': 'input-control', 'type': 'date'}),
+                                                      'data-mask': '999-999 999999',
+                                                      'required': True}),
+            'issue_date': forms.DateInput(attrs={'class': 'input-control', 'type': 'date',
+                                                 'required': True}),
             'issued_by': forms.Textarea(attrs={'class': 'input-control',
                                                # 'pattern': '[\w\s,]+',
-                                               'placeholder': 'Кем выдан паспорт'}),
+                                               'placeholder': 'Кем выдан паспорт',
+                                               'required': True}),
         }
 
 
@@ -143,8 +159,8 @@ class AdmissionEditForm(forms.ModelForm):
             'department',
         )
 
-        widgets={
-            'department': forms.CheckboxSelectMultiple(attrs={'class': '    '}),
+        widgets = {
+            'department': forms.CheckboxSelectMultiple(attrs={'class': ''}),
         }
 
 

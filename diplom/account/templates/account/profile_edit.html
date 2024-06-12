@@ -11,7 +11,7 @@
                 {% for f in form %}
                     {% if f.label == 'Согласие на обработку данных' %}
                         <div>
-                            <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <label for="{{ f.id_for_label }}">{{ f.label }}<span style="color: red">*</span>: </label>{{ f }}
                             <p class="download-document"><a href="{% url 'download_document' %}">Скачать согласие</a></p>
                             <div class="form-error">{{ f.errors }}</div>
                         </div>
@@ -23,7 +23,7 @@
                         </div>
                     {% else %}
                         <div>
-                            <label for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }}
+                            <label for="{{ f.id_for_label }}">{{ f.label }}<span style="color: red">*</span>: </label>{{ f }}
                             <div class="form-error">{{ f.errors }}</div>
                         </div>
 

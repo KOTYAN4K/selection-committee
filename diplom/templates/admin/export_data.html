@@ -1,18 +1,31 @@
 {% extends 'base.html' %}
 
 {% block title %}
-	Экспорт таблицы
+    Экспорт таблицы
 {% endblock %}
 
-{#{% block side-menu %}#}
-{#	<ul>#}
-{#        <li><a href="">Экспорт таблицы целиком</a></li>#}
-{#        <li><a href="">Экспорт выборкой</a></li>#}
-{#    </ul>#}
-{#{% endblock %}#}
 
 {% block content %}
-    <div>
-        <form action=""></form>
+    <div class="container">
+        <div class="export">
+            <h1>Выберите поля для экспорта</h1>
+            <form class="export_form" method="post">
+                {% csrf_token %}
+
+                <div class="form-errors">{{ form.non_field_errors }}</div>
+
+                {% for f in form %}
+
+                    <div class="input-field">
+                        <label hidden="hidden" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                        {{ f }}
+                        <div class="input-errors">{{ f.errors }}</div>
+                    </div>
+
+                {% endfor %}
+
+                <button class="form-control-submit-btn export-btn" type="submit">Отправить</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

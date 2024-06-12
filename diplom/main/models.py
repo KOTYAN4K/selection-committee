@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 import datetime
 
@@ -28,13 +29,13 @@ class Department(models.Model):
 
 class Applicant(models.Model):
     photo = models.ImageField(upload_to="applicants_photos/", default="applicants_photos/default.jpg",
-                              verbose_name="Фото")
+                              verbose_name="Фото лица, 3x4")
     last_name = models.CharField(max_length=100, verbose_name="Фамилия")
     first_name = models.CharField(max_length=100, verbose_name="Имя")
     patronymic = models.CharField(max_length=100, verbose_name="Отчество")
-    gender = models.CharField(max_length=10, verbose_name="Пол", choices=(("male", "Мужской"),
-                                                                          ("female", "Женский")),
-                              default='male')
+    gender = models.CharField(max_length=10, verbose_name="Пол", choices=(("Мужской", "Мужской"),
+                                                                          ("Женский", "Женский")),
+                              default='Мужской')
     birth_date = models.DateField(verbose_name="Дата рождения")
     email = models.EmailField(verbose_name="Эл.Почта")
     phone = models.CharField(max_length=20, verbose_name='Номер телефона студента', blank=True, null=True)
@@ -55,17 +56,17 @@ class Applicant(models.Model):
                                                                                   "образование")),
                                  default='Среднее(полное) общее образование'
                                  )
-    status = models.CharField(max_length=20, verbose_name="Статус заявки",
-                              choices=(("watching", "Рассмотрение"), ("answered", "Выдан ответ")),
-                              default='watching')
     consent = models.FileField(upload_to="consents/",
                                verbose_name='Согласие на обработку данных', blank=True, null=True)
+    status = models.CharField(max_length=20, verbose_name="Статус заявки",
+                              choices=(("Рассмотрение", "Рассмотрение"), ("Выдан ответ", "Выдан ответ")),
+                              default='Рассмотрение')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата отправки')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
     class Meta:
-        verbose_name = "Заявка на регистрацию"
-        verbose_name_plural = "Заявки на регистрацию"
+        verbose_name = "Абитуриент"
+        verbose_name_plural = "Абитуриенты"
 
     def change_status_to_answered(self):
         self.status = 'answered'
@@ -77,7 +78,7 @@ class Applicant(models.Model):
     get_graduation_date.short_description = 'Год окончания'
 
     def get_gender(self):
-        if self.gender == 'male':
+        if self.gender == 'Мужской':
             return 'Мужской'
         else:
             return 'Женский'
@@ -98,8 +99,6 @@ class Document(models.Model):
     passport_number = models.CharField(max_length=20, verbose_name="Номер паспорта", blank=True, null=True)
     issued_by = models.CharField(max_length=255, verbose_name="Кем выдан", blank=True, null=True)
     issue_date = models.DateField(verbose_name="Дата выдачи", blank=True, null=True)
-    certificate = models.CharField(max_length=255, verbose_name="Свидетельство", blank=True, null=True)
-    FIS = models.CharField(max_length=255, verbose_name="ФИС", blank=True, null=True)
 
     class Meta:
         verbose_name = "Документ"
@@ -172,19 +171,22 @@ class Admission(models.Model):
     department = models.ManyToManyField('Department', verbose_name="Отделение",
                                         blank=True)
     admission_date = models.DateField(verbose_name="Дата поступления", auto_now=True)
-    number_of_5 = models.IntegerField(default=0, verbose_name="Количество пятерок", blank=True, null=True)
-    number_of_4 = models.IntegerField(default=0, verbose_name="Количество четверок", blank=True, null=True)
-    number_of_3 = models.IntegerField(default=0, verbose_name="Количество троек", blank=True, null=True)
+    number_of_5 = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(20)],
+                                              verbose_name="Количество пятерок", blank=True, null=True)
+    number_of_4 = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(20)],
+                                              verbose_name="Количество четверок", blank=True, null=True)
+    number_of_3 = models.PositiveIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(20)],
+                                              verbose_name="Количество троек", blank=True, null=True)
     average_score = models.DecimalField(default=0.0, max_digits=5, decimal_places=2,
                                         verbose_name="Средний балл", blank=True, null=True)
     internal_exam = models.DecimalField(default=Decimal(0.0), max_digits=5, decimal_places=2,
                                         verbose_name="Результаты экзамена", blank=True, null=True)
     application_status = models.CharField(max_length=50, verbose_name="Статус заявки",
-                                          choices=(("watching", "Рассмотрение"),
-                                                   ("denied", "Отказано"),
-                                                   ("accepted", "Принят"),
-                                                   ("warn", "Отправлен на заполнение")),
-                                          default='watching')
+                                          choices=(("Рассмотрение", "Рассмотрение"),
+                                                   ("Отказано", "Отказано"),
+                                                   ("Принят", "Принят"),
+                                                   ("Отправлен на заполнение", "Отправлен на заполнение")),
+                                          default='Рассмотрение')
     original_or_copy = models.BooleanField(verbose_name="Оригинал или копия", blank=True, null=True, default=False)
     out_of_budget = models.BooleanField(default=False, verbose_name="Внебюджет", blank=True, null=True)
 

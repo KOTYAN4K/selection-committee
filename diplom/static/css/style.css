@@ -13,6 +13,11 @@
     list-style: none;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 .container {
     width: 1280px;
     margin: 0 auto;
@@ -26,6 +31,7 @@
 
 .header {
     background: var(--main-color);
+    width: 100%;
 }
 
 .navigation-menu {
@@ -312,11 +318,11 @@ textarea.input-control {
 }
 
 .form-page .mainside {
-    padding: 35px 0;
+    padding: 10vh 0;
 }
 
 .form-page.login .mainside {
-    padding: 114px 0;
+    padding: 30vh 0;
 }
 
 /* Форма подачи заявки на регистрацию */
@@ -516,6 +522,117 @@ footer {
     width: 100px;
 }
 
+.burger-checkbox {
+    position: absolute;
+    visibility: hidden;
+}
+
+.burger {
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    display: block;
+    border: none;
+    background: transparent;
+    width: 40px;
+    height: 26px;
+}
+
+.burger::before,
+.burger::after {
+    content: '';
+    left: 0;
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 4px;
+    border-radius: 10px;
+    background: var(--main-text-color);
+}
+
+.burger::before {
+    top: 0;
+    box-shadow: 0 11px 0 var(--main-text-color);
+    transition: box-shadow .3s .15s, top .3s .15s, transform .3s;
+}
+
+.burger::after {
+    bottom: 0;
+    transition: bottom .3s .15s, transform .3s;
+}
+
+.burger-checkbox:checked + .burger::before {
+    top: 11px;
+    transform: rotate(45deg);
+    box-shadow: 0 6px 0 rgba(255, 255, 255, 0);
+    transition: box-shadow .15s, top .3s, transform .3s .15s;
+}
+
+.burger-checkbox:checked + .burger::after {
+    bottom: 11px;
+    transform: rotate(-45deg);
+    transition: bottom .3s, transform .3s .15s;
+}
+
+.menu {
+    display: none;
+}
+
+.menu-list {
+    z-index: 10;
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 42px 0;
+    margin: 0;
+    background: var(--main-color);
+    list-style-type: none;
+    transform: translateX(-100%);
+    transition: .3s;
+    width: 200px;
+    height: 100%;
+}
+
+.menu-item {
+    display: block;
+    padding: 8px;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, .2)
+}
+
+.burger-checkbox:checked ~ .menu-list {
+    transform: translateX(0);
+}
+
+.form-page {
+    height: 100%;
+}
+
+main, .form-page.login .mainside {
+    width: 100%;
+}
+
+.wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.export{
+    padding: 25px;
+}
+
+.export-btn{
+    margin-top: 15px;
+}
 
 /* Медиа */
 
@@ -537,11 +654,26 @@ footer {
 @media only screen and (min-width: 768px) and (max-width: 1024px) {
     .container {
         width: 600px;
-        overflow: scroll;
     }
 
-    .profile.mainside {
-        overflow: scroll;
+    .mainside .container {
+        width: 550px;
+    }
+
+
+    .menu {
+        width: 600px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .adaptive-hide {
+        display: none;
+    }
+
+    .navigation-menu-list {
+        display: none;
     }
 }
 
@@ -549,7 +681,6 @@ footer {
 @media only screen and (max-width: 768px) {
     .container {
         width: 300px;
-        overflow: scroll;
     }
 
     .preview {
@@ -584,4 +715,40 @@ footer {
         width: 350px;
     }
 
+    .menu {
+        width: 300px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .side-menu {
+        display: none;
+    }
+
+    .user-profile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mainside .container {
+        width: 300px;
+    }
+
+    .adaptive-hide {
+        display: none;
+    }
+
+    .navigation-menu-list {
+        display: none;
+    }
+
+    .sixteen.columns {
+        text-align: center;
+        gap: 15px;
+        flex-direction: column;
+        justify-content: center;
+    }
 }

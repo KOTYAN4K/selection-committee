@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'import_export',
     'captcha',
     'bs4',
-    'requests'
+    'requests',
 ]
 
 MIDDLEWARE = [

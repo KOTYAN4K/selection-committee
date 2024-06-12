@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from diplom import settings
-from main.models import Applicant, School
+from main.models import Applicant, School, Document, Parent, Admission
 
 
 class ApplicantShortForm(forms.ModelForm):
@@ -21,9 +21,12 @@ class ApplicantShortForm(forms.ModelForm):
                   'email',
                   'captcha')
         widgets = {
-            'last_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Фамилия'}),
-            'first_name': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Имя'}),
-            'patronymic': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Отчество'}),
+            'last_name': forms.TextInput(
+                attrs={'class': 'input-control', 'placeholder': 'Фамилия', 'pattern': '^[А-Яа-яЁё]+$'}),
+            'first_name': forms.TextInput(
+                attrs={'class': 'input-control', 'placeholder': 'Имя', 'pattern': '^[А-Яа-яЁё]+$'}),
+            'patronymic': forms.TextInput(
+                attrs={'class': 'input-control', 'placeholder': 'Отчество', 'pattern': '^[А-Яа-яЁё]+$'}),
             'school': forms.TextInput(attrs={'class': 'input-control', 'placeholder': 'Школа'}),
             'email': forms.EmailInput(attrs={'class': 'input-control', 'placeholder': 'Электронная почта'}),
             'gender': forms.RadioSelect(attrs={'class': 'radio-input'}),
@@ -41,3 +44,42 @@ class ApplicantShortForm(forms.ModelForm):
         if get_user_model().objects.filter(email=email).exists():
             raise forms.ValidationError("Такой E-mail уже существует!")
         return email
+
+
+EXCLUDE_FIELDS = ['id', 'photo', 'consent', 'student', 'status', 'created_at', 'updated_at', 'applicant']
+
+
+def get_fields_with_verbose_names(model):
+    fields = []
+    for field in model._meta.fields:
+        if field.name not in EXCLUDE_FIELDS:
+            fields.append((field.name, field.verbose_name))
+    return fields
+
+
+class FieldSelectionForm(forms.Form):
+    APPLICANT_FIELDS = get_fields_with_verbose_names(Applicant)
+    DOCUMENT_FIELDS = get_fields_with_verbose_names(Document)
+    PARENT_FIELDS = get_fields_with_verbose_names(Parent)
+    ADMISSION_FIELDS = get_fields_with_verbose_names(Admission)
+
+    APPLICANT_CHOICES = forms.MultipleChoiceField(
+        choices=APPLICANT_FIELDS,
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}),
+        label='Поля абитуриента'
+    )
+    DOCUMENT_CHOICES = forms.MultipleChoiceField(
+        choices=DOCUMENT_FIELDS,
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}),
+        label='Поля документа'
+    )
+    PARENT_CHOICES = forms.MultipleChoiceField(
+        choices=PARENT_FIELDS,
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}),
+        label='Поля родителей'
+    )
+    ADMISSION_CHOICES = forms.MultipleChoiceField(
+        choices=ADMISSION_FIELDS,
+        widget=forms.CheckboxSelectMultiple(attrs={'checked': 'checked'}),
+        label='Поля поступления'
+    )

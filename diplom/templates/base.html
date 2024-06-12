@@ -42,6 +42,7 @@
     <header class="header">
         <div class="container">
             <nav class="navigation-menu">
+
                 <ul class="navigation-menu-list">
                     <li><a href="{% url 'home' %}"><img src="{% static 'main/img/logo.svg' %}" alt=""></a></li>
                     <li><a href="{% url 'home' %}">Главная</a></li>
@@ -67,6 +68,33 @@
                         <li><a href="{% url 'form' %}">Регистрация</a></li>
                     {% endif %}
                 </ul>
+                <div class="menu">
+                    <a href="{% url 'home' %}"><img src="{% static 'main/img/logo.svg' %}" alt=""></a>
+                    <input type="checkbox" id="burger-checkbox" class="burger-checkbox">
+                    <label for="burger-checkbox" class="burger"></label>
+                    <ul class="menu-list">
+                        <li><a class="menu-item" href="{% url 'home' %}">Главная</a></li>
+                        {% if user.is_authenticated %}
+                            {% if user.is_superuser or user.is_staff %}
+                                <li><a class="menu-item" href="/admin/">Админ-панель</a></li>
+                            {% else %}
+                                <li><a class="menu-item" href="{% url 'account:profile' user.id %}">Личный кабинет</a>
+                                </li>
+                            {% endif %}
+
+                            <li>
+                                <form class="menu-item" action="{% url 'account:logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="exit-button" type="submit">Выйти</button>
+                                </form>
+
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'account:login' %}">Логин</a></li>
+                            <li><a href="{% url 'form' %}">Регистрация</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </nav>
         </div>
     </header>
@@ -80,7 +108,9 @@
         </div>
     </main>
 
-    <footer id="section-sub-footer" class="site-sub-footer clearfix" role="contentinfo">
+    
+</div>
+<footer id="section-sub-footer" class="site-sub-footer clearfix" role="contentinfo">
         <div class="container">
             <div class="sixteen columns">
 
@@ -122,7 +152,6 @@
             </div>
         </div>
     </footer>
-</div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
@@ -140,8 +169,8 @@
     $(document).ready(function () {
         // Добавление маски на поля при загрузке страницы
         $('#id_SNILS').mask('000-000-000 00');
-        $('#id_INN').mask('000-000-000 00');
-        $('#id_passport_number').mask('000-000 000000');
+        $('#id_INN').mask('00-00-000000-00');
+        $('#id_passport_number').mask('00 00 000000');
         $('#id_phone').mask('+7(000)000-00-00');
 
         // Обработка изменения значения в полях
@@ -150,22 +179,22 @@
         });
 
         $('#id_INN').on('input', function () {
-            $(this).mask('000-000-000 00');
+            $(this).mask('00-00-000000-00');
 
         });
 
         $('#id_passport_number').on('input', function () {
-            $(this).mask('000-000 000000');
+            $(this).mask('00 00 000000');
         });
 
         $('#id_phone').on('input', function () {
             $(this).mask('+7(000)000-00-00');
         });
-        
+
         $('#id_mother_phone').on('input', function () {
             $(this).mask('+7(000)000-00-00');
         });
-        
+
         $('#id_father_phone').on('input', function () {
             $(this).mask('+7(000)000-00-00');
         });

@@ -1,7 +1,7 @@
 import os
 import string
 
-from django.db.models import Q
+import openpyxl
 from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -9,8 +9,8 @@ from django.views.generic import TemplateView, ListView, FormView, CreateView
 from openpyxl.workbook import Workbook
 
 from main.admin import StudentResource
-from main.forms import ApplicantShortForm
-from main.models import Department, Applicant, Parent, School
+from main.forms import ApplicantShortForm, FieldSelectionForm
+from main.models import Department, Applicant, Parent, School, ApplicantAdmissionView, Document, Admission
 from main.utils import parse_schools, fill_template
 
 
@@ -260,9 +260,115 @@ def export_data(request):
 
 def export_students(request):
     dataset = StudentResource().export()
-    response = HttpResponse(dataset.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response = HttpResponse(dataset.xlsx,
+                            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename="students.xlsx"'
     return response
+
+
+def export_to_excel(request):
+    if request.method == 'POST':
+        form = FieldSelectionForm(request.POST)
+        if form.is_valid():
+            selected_fields = {
+                'applicant': form.cleaned_data.get('APPLICANT_CHOICES', []),
+                'document': form.cleaned_data.get('DOCUMENT_CHOICES', []),
+                'parent': form.cleaned_data.get('PARENT_CHOICES', []),
+                'admission': form.cleaned_data.get('ADMISSION_CHOICES', [])
+            }
+
+            # Create a workbook and add a worksheet
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = "Applicant Data"
+
+            # Add headers
+            row_num = 1
+            col_num = 1
+            headers = [('ID', 'ID')]  # Add 'ID' as the first column
+            verbose_names = ['ID']
+            order = ['last_name', 'first_name', 'patronymic', 'gender', 'birth_date', 'email', 'phone', 'address',
+                     'school', 'graduation_date', 'education', 'consent', 'SNILS',
+                     'INN', 'passport_number', 'certificate', 'FIS', 'mother_full_name',
+                     'mother_phone', 'father_full_name', 'father_phone', 'admission_date', 'number_of_5', 'number_of_4',
+                     'number_of_3', 'average_score', 'internal_exam', 'application_status', 'original_or_copy',
+                     'out_of_budget', 'received_receipt', 'internal_exam_conducted', 'documents_collected',
+                     'application_in_gov_services']
+
+            def sort_fields(fields):
+                return sorted(fields, key=lambda x: order.index(x[0]) if x[0] in order else len(order))
+
+            # Map selected fields to their verbose names
+            models_map = {
+                'applicant': Applicant,
+                'document': Document,
+                'parent': Parent,
+                'admission': Admission,
+            }
+
+            for model, fields in selected_fields.items():
+                sorted_fields = sort_fields([(field, field) for field in fields])
+                for field, _ in sorted_fields:
+                    headers.append((model, field))
+                    verbose_name = models_map[model]._meta.get_field(field).verbose_name
+                    verbose_names.append(verbose_name)
+                    ws.cell(row=row_num, column=col_num + 1, value=verbose_name)  # Shift by 1 for ID
+                    col_num += 1
+
+            # Add headers for ID
+            ws.cell(row=row_num, column=1, value='ID')
+
+            # Add data
+            for idx, obj in enumerate(ApplicantAdmissionView.objects.all(), start=1):
+                row_num += 1
+                col_num = 1
+                # Add ID
+                ws.cell(row=row_num, column=col_num, value=idx)
+                col_num += 1
+                for model, field in headers[1:]:  # Skip the first ID header
+                    related_obj = getattr(obj, model)
+                    value = getattr(related_obj, field)
+                    if callable(value):
+                        value = value()
+                    if isinstance(value, bool):
+                        value = 'Да' if value else 'Нет'
+                    ws.cell(row=row_num, column=col_num, value=value)
+                    col_num += 1
+
+            # Adjust column widths
+            for col in ws.columns:
+                max_length = 0
+                column = col[0].column_letter  # Get the column name
+                for cell in col:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = (max_length + 2)
+                ws.column_dimensions[column].width = adjusted_width
+
+            # Adjust row heights
+            for row in ws.iter_rows():
+                max_height = 15  # Default height
+                for cell in row:
+                    if cell.value:
+                        cell_height = (len(str(cell.value)) // 20) * 5
+                        if cell_height > max_height:
+                            max_height = cell_height
+                ws.row_dimensions[cell.row].height = max_height
+
+            # Save the workbook
+            response = HttpResponse(
+                content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )
+            response['Content-Disposition'] = 'attachment; filename=applicant_data.xlsx'
+            wb.save(response)
+            return response
+    else:
+        form = FieldSelectionForm()
+
+    return render(request, 'admin/export_data.html', {'form': form})
 
 
 def page_not_found(request, exception):

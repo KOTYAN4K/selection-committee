@@ -1,10 +1,10 @@
-:root{
+:root {
     --main-color: #0072A3;
     --secondary-color: #458dc6;
     --main-text-color: #ffffff;
 }
 
-#header, .module caption{
+#header, .module caption {
     background: var(--main-color);
 }
 
@@ -13,7 +13,7 @@
     color: var(--main-color);
 }
 
-div.breadcrumbs{
+div.breadcrumbs {
     background: var(--secondary-color);
 }
 
@@ -21,12 +21,68 @@ div.breadcrumbs{
     background-image: url(../../img/icons8-dwnld-24.png);
     background-size: 13px;
 }
+
 .object-tools a.viewsitelink, .object-tools a.download-table {
     background-repeat: no-repeat;
     background-position: right 7px center;
     padding-right: 26px;
 }
 
-.module h2{
+.module h2 {
     background: var(--secondary-color);
+}
+
+#changelist-form .results {
+    scroll-behavior: smooth;
+    height: 400px;
+}
+
+.action-checkbox-column,
+.action-checkbox {
+    position: sticky;
+    left: -1px;
+    background: inherit;
+    z-index: 2;
+
+}
+
+.column-id,
+.field-id {
+    position: sticky;
+    left: 31px; /* Ширина первой колонки */
+    background: inherit;
+    z-index: 2;
+}
+
+.column-last_name,
+.field-last_name {
+    position: sticky;
+    left: 62px; /* Ширина первой + второй колонки */
+    background: inherit;
+    z-index: 2;
+}
+
+.column-first_name,
+.field-first_name  {
+    position: sticky;
+    left: 182px; /* Ширина первой + второй + третьей колонки */
+    background: inherit;
+    z-index: 2;
+}
+
+.column-patronymic,
+.field-patronymic  {
+    position: sticky;
+    left: 268px; /* Ширина первой + второй + третьей + четвертой колонки */
+    background: inherit;
+    z-index: 2;
+}
+
+.column-get_fio,
+.field-get_fio{
+    min-width: 250px;
+    position: sticky;
+    left: 61px; /* Ширина первой + второй + третьей + четвертой колонки */
+    background: inherit;
+    z-index: 2;
 }
